@@ -54,7 +54,7 @@ const Register = () => {
 
       <Button title={'Sign Up'} onClick={fnRegister} />
 
-      <span onClick={()=>navigate(ROUTES.register)} className='register_account_txt'>Already have an account? Sign In</span>
+      <span onClick={()=>navigate(ROUTES.login)} className='register_account_txt'>Already have an account? Sign In</span>
     </ViewAuth>
   )
 }

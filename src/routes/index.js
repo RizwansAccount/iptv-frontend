@@ -5,6 +5,7 @@ import Login from '../pages/login'
 import Register from '../pages/register'
 import Home from '../pages/home'
 import ProtectedRoute from './ProtectedRoute'
+import NotFound from '../pages/notFound'
 
 const ReactRoutes = () => {
   return (
@@ -17,6 +18,8 @@ const ReactRoutes = () => {
             <Route element={<ProtectedRoute/>}>
               <Route path={ROUTES.home} element={<Home/>} />
             </Route>
+
+            <Route path='*' element={<NotFound/>} />
 
         </Routes>
     </BrowserRouter>
