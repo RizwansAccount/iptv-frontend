@@ -1,7 +1,7 @@
 import { Config } from "../constants";
 import { getLocalStorage } from "../localStorage";
 
-export const fetch = async ({ url = '', http_verb = 'get', data = null, contentType = 'application/json', token = false }) =>{
+export const apiCall = async ({ url = '', http_verb = 'get', data = null, contentType = 'application/json', token = false }) =>{
     const storedToken = token ?? getLocalStorage(Config.userToken);
 
 		const requestOptions = {
@@ -18,6 +18,7 @@ export const fetch = async ({ url = '', http_verb = 'get', data = null, contentT
         };
 
 		try {
+			console.log('url', Config.apiUrl + url)
 			const response = await fetch(Config.apiUrl + url, requestOptions);
 			const responseJson = await response?.json();
 			return responseJson;

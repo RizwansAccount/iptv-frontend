@@ -1,4 +1,4 @@
 export const Config = {
-    apiUrl : 'https://localhost:3000/',
+    apiUrl : 'http://localhost:3000/',
     userToken : 'user-token'
 }

@@ -1,0 +1,42 @@
+.register_inputBox {
+    display: flex;
+    flex-direction: column;
+    gap: 13px;
+}
+
+.register_inputBox .input {
+    padding: 14px;
+    border-radius: 9.92px;
+    border: 1px solid #E2E8F0;
+    color: #94A3B8;
+}
+
+.register_heading {
+    font-size: 19px;
+}
+
+.register_checkbox_container {
+    display: flex;
+    gap: 6px;
+}
+
+.register_checkbox_container span {
+    font-size: 10px;
+}
+
+.register_account_txt {
+    text-align: center;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.register_account_txt:hover {
+    border-bottom: 1px solid black;
+    margin: auto;
+}
+
+.register_checkbox_container {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}

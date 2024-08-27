@@ -1,0 +1,62 @@
+.login_inputBox {
+    display: flex;
+    flex-direction: column;
+    gap: 13px;
+}
+
+.login_inputBox .input {
+    padding: 14px;
+    border-radius: 9.92px;
+    border: 1px solid #E2E8F0;
+    color: #94A3B8;
+}
+
+.login_inputBox .rememberBox {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.rememberBox span {
+    font-size: 12px;
+}
+
+.login_heading_box {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.login_heading_box h1 {
+    font-size: 19px;
+}
+.login_heading_box h3 {
+    font-size: 12px;
+}
+
+.login_account_txt {
+    text-align: center;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.login_account_txt:hover {
+    border-bottom: 1px solid black;
+    margin: auto;
+}
+
+.login_forgot_txt {
+    font-weight: 500;
+    color: #2563EB;
+    cursor: pointer;
+}
+
+.login_forgot_txt:hover {
+    border-bottom: 1px solid #2563EB;
+}
+
+.login_checkbox_container {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
