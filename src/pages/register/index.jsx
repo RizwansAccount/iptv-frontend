@@ -36,8 +36,8 @@ const Register = () => {
         const result = await registerUser(body);
         const response = result?.data;
         if (response?.success) {
+          fnShowSnackBar(response?.message);
           navigate(ROUTES.verification, { state: { email: userInput.email } });
-          fnShowSnackBar(response?.message)
         } else {
           fnShowSnackBar(response?.message, true);
         }

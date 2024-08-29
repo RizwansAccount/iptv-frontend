@@ -18,8 +18,9 @@ export const iptvApi = createApi({
     endpoints: (builder) => ({
         registerUser: builder.mutation({ query: (data) => ({ url: 'users/registration', method: 'POST', body: data, }) }),
         loginUser: builder.mutation({ query: (data) => ({ url: 'users/login', method: 'POST', body: data, }) }),
-        verifyUser: builder.mutation({ query: (data) => ({ url: 'users/resend-code', method: 'POST', body: data }) }),
+        verifyUser: builder.mutation({ query: (data) => ({ url: 'users/verify-code', method: 'POST', body: data }) }),
+        resendCode: builder.mutation({ query: (data) => ({ url: 'users/resend-code', method: 'POST', body: data }) }),
     }),
 })
 
-export const { useRegisterUserMutation, useLoginUserMutation, useVerifyUserMutation,  } = iptvApi;
+export const { useRegisterUserMutation, useLoginUserMutation, useVerifyUserMutation, useResendCodeMutation  } = iptvApi;
