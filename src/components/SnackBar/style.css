@@ -32,6 +32,6 @@
   .snackBar .message {
     font-family: 'Poppins', sans-serif;
     font-size: 14px;
-    text-transform: capitalize;
+    /* text-transform: capitalize; */
   }
   

@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import { apiCall } from '../../api';
 import Button from '../../components/Button/index';
 import './style.css';
 import { setLocalStorage } from '../../localStorage';
@@ -8,26 +7,34 @@ import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '../../routes/RouteConstants';
 import ViewAuth from '../../components/Views/ViewAuth';
 import { useSnackBarManager } from '../../hooks/useSnackBarManager';
+import { useLoginUserMutation } from '../../redux/storeApis';
 
 const Login = () => {
 
   const navigate = useNavigate();
   const { fnShowSnackBar } = useSnackBarManager();
 
+  const [loginUser, { isLoading : isLoadingLoginUser }] = useLoginUserMutation();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const fnLogin = async() => {
+  const fnLogin = async () => {
 
-    if(email && password) {
-      const body = { email, password };
-      const response = await apiCall({url : 'users/login', http_verb : 'POST', data : body});
-      if(response?.success) {
-        const token = response?.token;
-        setLocalStorage(Config.userToken, token);
-        navigate(ROUTES.home);
-        fnShowSnackBar('user logged in successfully!');
-      } else {
+    if (email && password) {
+      try {
+        const body = { email, password };
+        const result = await loginUser(body);
+        const response = result?.data;
+        if (response?.success) {
+          const token = response?.token;
+          setLocalStorage(Config.userToken, token);
+          navigate(ROUTES.home);
+          fnShowSnackBar('user logged in successfully!');
+        } else {
+          fnShowSnackBar((response?.message || 'oops! wrong credentials try again'), true);
+        }
+      } catch (error) {
         fnShowSnackBar('oops! wrong credentials try again', true);
       }
     } else {
@@ -44,8 +51,8 @@ const Login = () => {
       </div>
 
       <div className='login_inputBox'>
-        <input value={email} name='email' type="text" className='input' placeholder='Email' onChange={(e)=> setEmail(e.target.value)} />
-        <input value={password} name='password' type="text" className='input' placeholder='Password' onChange={(e)=> setPassword(e.target.value)} />
+        <input value={email} name='email' type="text" className='input' placeholder='Email' onChange={(e) => setEmail(e.target.value)} />
+        <input value={password} name='password' type="text" className='input' placeholder='Password' onChange={(e) => setPassword(e.target.value)} />
         <div className='rememberBox'>
           <div className='login_checkbox_container'>
             <input type='checkbox' />
@@ -53,11 +60,11 @@ const Login = () => {
           </div>
           <span className='login_forgot_txt'>Forgot password ?</span>
         </div>
-      </div> 
+      </div>
 
-      <Button title={'Sign In'} onClick={fnLogin} />
+      <Button title={'Sign In'} isLoading={isLoadingLoginUser} onClick={fnLogin} />
 
-      <span onClick={()=>navigate(ROUTES.register)} className='login_account_txt'>Don't have an account? Sign Up</span>
+      <span onClick={() => navigate(ROUTES.register)} className='login_account_txt'>Don't have an account? Sign Up</span>
     </ViewAuth>
   )
 }

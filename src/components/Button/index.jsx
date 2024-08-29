@@ -1,11 +1,11 @@
 import React from 'react'
 import './style.css';
 
-const Button = ({title, onClick}) => {
+const Button = ({title, onClick, isLoading}) => {
   return (
-    <div onClick={onClick} className='button_btn'>
-        {title}
-    </div>
+    <button onClick={onClick} disabled={isLoading} className='button_btn'>
+      { isLoading ? 'Loading...' : title}
+    </button>
   )
 }
 

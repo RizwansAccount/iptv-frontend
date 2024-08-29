@@ -16,7 +16,7 @@ export function useSnackBarManager() {
 
     const fnHideSnackBar = () => {
         dispatch(hideSnackBarMessage());
-        setTimeout(() => {dispatch(setErrorMessage(false));}, 1000);
+        setTimeout(() => {dispatch(setErrorMessage(false));}, 100);
     };
 
     return {

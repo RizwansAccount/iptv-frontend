@@ -4,13 +4,15 @@ import { ROUTES } from '../../routes/RouteConstants';
 import { useNavigate } from 'react-router-dom';
 import Button from '../../components/Button';
 import './style.css'
-import { apiCall } from '../../api';
 import { useSnackBarManager } from '../../hooks/useSnackBarManager';
+import { useRegisterUserMutation } from '../../redux/storeApis';
 
 const Register = () => {
 
   const navigate = useNavigate();
-  const {fnShowSnackBar} = useSnackBarManager();
+  const { fnShowSnackBar } = useSnackBarManager();
+
+  const [registerUser, { isLoading: isLoadingRegisterUser }] = useRegisterUserMutation();
 
   const [userInput, setUserInput] = useState({ first_name: "", last_name: "", email: "", password: "" });
 
@@ -22,19 +24,27 @@ const Register = () => {
   };
 
   const fnRegister = async () => {
-
-    const body = { first_name: userInput.first_name, last_name: userInput.last_name, email: userInput.email, password: userInput.password };
+    const body = {
+      first_name: userInput.first_name,
+      last_name: userInput.last_name,
+      email: userInput.email,
+      password: userInput.password
+    };
 
     if (userInput?.first_name && userInput?.last_name && userInput?.email && userInput?.password) {
+      try {
+        const result = await registerUser(body);
+        const response = result?.data;
+        if (response?.success) {
+          navigate(ROUTES.verification, { state: { email: userInput.email } });
+          fnShowSnackBar(response?.message)
+        } else {
+          fnShowSnackBar(response?.message, true);
+        }
 
-      const response = await apiCall({ url: 'users/registration', http_verb: 'post', data: body });
-      if (response?.success) {
-        navigate(ROUTES.verification, { state : { email : userInput.email } });
-        fnShowSnackBar(response?.message)
-      } else {
-        fnShowSnackBar(response?.message, true);
+      } catch (error) {
+        fnShowSnackBar((error || 'something went wrong!'), true);
       }
-
     } else {
       fnShowSnackBar('please must filled all fields!', true)
     }
@@ -59,7 +69,7 @@ const Register = () => {
         </span>
       </div>
 
-      <Button title={'Sign Up'} onClick={fnRegister} />
+      <Button title={'Sign Up'} isLoading={isLoadingRegisterUser} onClick={fnRegister} />
 
       <span onClick={() => navigate(ROUTES.login)} className='register_account_txt'>Already have an account? Sign In</span>
     </ViewAuth>
