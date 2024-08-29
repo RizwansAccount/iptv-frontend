@@ -28,10 +28,10 @@ const Login = () => {
         navigate(ROUTES.home);
         fnShowSnackBar('user logged in successfully!');
       } else {
-        alert('oops! wrong credentials try again');
+        fnShowSnackBar('oops! wrong credentials try again', true);
       }
     } else {
-      alert('all fields must be filled')
+      fnShowSnackBar('all fields must be filled', true);
     }
 
   };

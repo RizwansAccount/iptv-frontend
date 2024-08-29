@@ -5,10 +5,12 @@ import { useNavigate } from 'react-router-dom';
 import Button from '../../components/Button';
 import './style.css'
 import { apiCall } from '../../api';
+import { useSnackBarManager } from '../../hooks/useSnackBarManager';
 
 const Register = () => {
 
   const navigate = useNavigate();
+  const {fnShowSnackBar} = useSnackBarManager();
 
   const [userInput, setUserInput] = useState({ first_name: "", last_name: "", email: "", password: "" });
 
@@ -28,12 +30,13 @@ const Register = () => {
       const response = await apiCall({ url: 'users/registration', http_verb: 'post', data: body });
       if (response?.success) {
         navigate(ROUTES.verification, { state : { email : userInput.email } });
+        fnShowSnackBar(response?.message)
       } else {
-        alert(response?.message)
+        fnShowSnackBar(response?.message, true);
       }
 
     } else {
-      alert('must filled all fields!')
+      fnShowSnackBar('please must filled all fields!', true)
     }
   };
 

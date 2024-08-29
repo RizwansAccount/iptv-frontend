@@ -5,11 +5,13 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import Button from '../../components/Button'
 import { apiCall } from '../../api'
 import { ROUTES } from '../../routes/RouteConstants'
+import { useSnackBarManager } from '../../hooks/useSnackBarManager'
 
 const VerifyCode = () => {
 
     const location = useLocation();
     const navigate = useNavigate();
+    const {fnShowSnackBar} = useSnackBarManager();
 
     const email = location?.state?.email ? location?.state?.email : "" ;
 
@@ -20,6 +22,7 @@ const VerifyCode = () => {
         const response = await apiCall({ url:'users/verify-code', http_verb : 'post', data : body });
         if(response?.success) {
             navigate(ROUTES.login);
+            fnShowSnackBar(response?.message);
         }
     };
 
@@ -27,7 +30,7 @@ const VerifyCode = () => {
         const body = { email };
         const response = await apiCall({ url:'users/resend-code', http_verb : 'post', data : body });
         if(response?.success) {
-            alert('Check your email!')
+            fnShowSnackBar('Check your email!')
         }
     };
 
