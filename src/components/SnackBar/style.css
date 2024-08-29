@@ -6,23 +6,19 @@
     position: fixed;
     top: 30px;
     padding: 12px 20px;
-    right: -30px; /* Default position when snack bar is hidden */
-    background-color: #4a6da7; /* Default background color */
+    right: 0px;
+    background-color: var(--primary);
     color: #fff;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    gap: 16px;
+    gap: 8px;
     border-radius: 10px;
-    transition: transform 0.3s ease-in-out;
-    z-index: 9999;
+    transition: transform 0.2s ease-in-out;
+    z-index: 10;
+    transform: translateX(100%)
   }
   
   .snackBar.show {
-    right: 30px;
-    transform: translateX(0);
-  }
-  
-  .snackBar.hide {
-    transform: translateX(100%);
+    transform: translateX(-10%);
   }
   
   .snackBar.error {

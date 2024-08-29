@@ -47,12 +47,12 @@
 
 .login_forgot_txt {
     font-weight: 500;
-    color: #2563EB;
+    color: var(--primary);
     cursor: pointer;
 }
 
 .login_forgot_txt:hover {
-    border-bottom: 1px solid #2563EB;
+    border-bottom: 1px solid var(--primary);
 }
 
 .login_checkbox_container {
