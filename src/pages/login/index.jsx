@@ -7,7 +7,7 @@ import { Config } from '../../constants';
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '../../routes/RouteConstants';
 import ViewAuth from '../../components/Views/ViewAuth';
-import { useSnackBarManager } from '../../hooks/jdlfkjaf';
+import { useSnackBarManager } from '../../hooks/useSnackBarManager';
 
 const Login = () => {
 

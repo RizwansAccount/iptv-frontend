@@ -1,6 +1,6 @@
 import React from 'react'
 import './style.css'
-import { useSnackBarManager } from '../../hooks/jdlfkjaf';
+import { useSnackBarManager } from '../../hooks/useSnackBarManager';
 
 const SnackBar = () => {
     const { isShowSnackBar, isError } = useSnackBarManager();
