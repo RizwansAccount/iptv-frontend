@@ -1,0 +1,41 @@
+/* SnackBar.css */
+.snackBar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    top: 30px;
+    padding: 12px 20px;
+    right: -30px; /* Default position when snack bar is hidden */
+    background-color: #4a6da7; /* Default background color */
+    color: #fff;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    gap: 16px;
+    border-radius: 10px;
+    transition: transform 0.3s ease-in-out;
+    z-index: 9999;
+  }
+  
+  .snackBar.show {
+    right: 30px;
+    transform: translateX(0);
+  }
+  
+  .snackBar.hide {
+    transform: translateX(100%);
+  }
+  
+  .snackBar.error {
+    background-color: #c53030;
+  }
+  
+  .snackBar .icon {
+    cursor: pointer;
+  }
+  
+  .snackBar .message {
+    font-family: 'Poppins', sans-serif;
+    font-size: 14px;
+    text-transform: capitalize;
+  }
+  

@@ -7,10 +7,12 @@ import { Config } from '../../constants';
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '../../routes/RouteConstants';
 import ViewAuth from '../../components/Views/ViewAuth';
+import { useSnackBarManager } from '../../hooks/jdlfkjaf';
 
 const Login = () => {
 
   const navigate = useNavigate();
+  const { fnShowSnackBar } = useSnackBarManager();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -24,6 +26,7 @@ const Login = () => {
         const token = response?.token;
         setLocalStorage(Config.userToken, token);
         navigate(ROUTES.home);
+        fnShowSnackBar('user logged in successfully!');
       } else {
         alert('oops! wrong credentials try again');
       }
