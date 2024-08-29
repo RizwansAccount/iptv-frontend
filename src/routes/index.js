@@ -6,6 +6,7 @@ import Register from '../pages/register'
 import Home from '../pages/home'
 import ProtectedRoute from './ProtectedRoute'
 import NotFound from '../pages/notFound'
+import VerifyCode from '../pages/verifyCode'
 
 const ReactRoutes = () => {
   return (
@@ -14,6 +15,7 @@ const ReactRoutes = () => {
           
             <Route path={ROUTES.login} element={<Login/>} />
             <Route path={ROUTES.register} element={<Register/>} />
+            <Route path={ROUTES.verification} element={<VerifyCode/>} />
 
             <Route element={<ProtectedRoute/>}>
               <Route path={ROUTES.home} element={<Home/>} />

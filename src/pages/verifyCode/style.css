@@ -1,0 +1,51 @@
+.code_receive_email {
+    cursor: pointer;
+}
+
+.code_receive_email:hover {
+    border-bottom: 1px solid black;
+}
+
+.code_receive_email span {
+    font-weight: bold;
+    color: #2563EB;
+}
+
+.code_input {
+    padding: 14px;
+    border-radius: 9.92px;
+    border: 1px solid #E2E8F0;
+    color: #94A3B8;
+}
+
+.code_header_container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.code_header_container .heading {
+    font-size: 26px;
+    font-weight: 500;
+}
+
+.code_header_container .description {
+    font-size: 14px;
+    color: #94A3B8;
+    text-align: center;
+}
+
+.code_receive_email {
+    text-align: center;
+    font-size: 12px;
+    cursor: pointer;
+    margin: auto;
+}
+
+.code_receive_email:hover {
+    border-bottom: 1px solid black;
+}
+
+.code_receive_email span {
+    font-weight: 500;
+    color: #2563EB;
+}

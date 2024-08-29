@@ -28,11 +28,11 @@
     text-align: center;
     font-size: 12px;
     cursor: pointer;
+    margin: auto;
 }
 
 .register_account_txt:hover {
     border-bottom: 1px solid black;
-    margin: auto;
 }
 
 .register_checkbox_container {
