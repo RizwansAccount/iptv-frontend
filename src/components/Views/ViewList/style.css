@@ -1,0 +1,8 @@
+.list_box {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    padding: 14px;
+    border-bottom: 1px solid lightgrey;
+}

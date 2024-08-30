@@ -1,3 +1,32 @@
 .top_bar {
     height: 10%;
+    /* background-color: #FB7B8E; */
+    display: flex;
+}
+
+.top_bar1 {
+    width: 350px;
+    background-color: #F88BA1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 100%;
+    padding: 0px 12px;
+}
+
+.top_bar2 {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0px 12px;
+    width: calc(100% - 350px);
+    background-color: #FE938B;
+}
+
+.icon {
+    font-size: 30px;
+}
+.icon_small {
+    font-size: 22px;
 }

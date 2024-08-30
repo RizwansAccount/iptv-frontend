@@ -1,0 +1,11 @@
+.genre_container {
+    width: calc(100% - 350px);
+}
+.edit_view_box {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.list {
+    width: 100%;
+}

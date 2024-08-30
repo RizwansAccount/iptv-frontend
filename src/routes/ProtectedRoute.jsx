@@ -16,7 +16,7 @@ const ProtectedRoute = () => {
   return (
     <>
       <TopBar/>
-      <div style={{background:'pink', height:'90%', width:'100%', display:'flex', alignItems:'flex-start'}}>
+      <div style={{background:'#EFF2F4', height:'90%', width:'100%', display:'flex', alignItems:'flex-start'}}>
         <SideBar/>
         <Outlet />
       </div>

@@ -1,7 +1,7 @@
 .side_bar {
     width: 350px;
     height: 100%;
-    background-color: burlywood;
+    background-color: #205283;
     display: flex;
     flex-direction: column;
     gap: 14px;
@@ -20,9 +20,9 @@
 }
 
 .side_bar .tab_active {
-    background-color: var(--primary);
+    background-color: #082F56;
     width: 100%;
-    color: white;
+    color: #D9D9D9;
     border-radius: 4px;
     text-align: center;
     padding: 6px 0px;
