@@ -1,6 +1,3 @@
-.genre_container {
-    width: calc(100% - 350px);
-}
 .edit_view_box {
     display: flex;
     align-items: center;
