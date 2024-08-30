@@ -20,7 +20,11 @@ export const iptvApi = createApi({
         loginUser: builder.mutation({ query: (data) => ({ url: 'users/login', method: 'POST', body: data, }) }),
         verifyUser: builder.mutation({ query: (data) => ({ url: 'users/verify-code', method: 'POST', body: data }) }),
         resendCode: builder.mutation({ query: (data) => ({ url: 'users/resend-code', method: 'POST', body: data }) }),
+
+        getAllGenre : builder.query({ query: ()=> ({ url : 'genres' }), transformResponse : (res)=> res?.data }),
     }),
 })
 
-export const { useRegisterUserMutation, useLoginUserMutation, useVerifyUserMutation, useResendCodeMutation  } = iptvApi;
+export const { useRegisterUserMutation, useLoginUserMutation, useVerifyUserMutation, useResendCodeMutation,
+    useGetAllGenreQuery
+  } = iptvApi;
