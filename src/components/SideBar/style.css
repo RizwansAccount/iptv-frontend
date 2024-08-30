@@ -1,0 +1,31 @@
+.side_bar {
+    width: 350px;
+    height: 100%;
+    background-color: burlywood;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding: 46px 34px;
+}
+
+.side_bar .tab {
+    background-color: white;
+    width: 100%;
+    color: black;
+    border-radius: 4px;
+    text-align: center;
+    padding: 6px 0px;
+    font-size: 18px;
+    text-decoration: none;
+}
+
+.side_bar .tab_active {
+    background-color: var(--primary);
+    width: 100%;
+    color: white;
+    border-radius: 4px;
+    text-align: center;
+    padding: 6px 0px;
+    font-size: 18px;
+    text-decoration: none;
+}

@@ -29,7 +29,7 @@ const Login = () => {
         if (response?.success) {
           const token = response?.token;
           setLocalStorage(Config.userToken, token);
-          navigate(ROUTES.home);
+          navigate(ROUTES.genre);
           fnShowSnackBar('user logged in successfully!');
         } else {
           fnShowSnackBar((response?.message || 'oops! wrong credentials try again'), true);

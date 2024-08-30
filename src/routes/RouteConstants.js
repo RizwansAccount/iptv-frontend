@@ -1,6 +1,9 @@
 export const ROUTES = {
-    home : '/',
     login : '/login',
     register : '/register',
-    verification : '/verification'
+    verification : '/verification',
+    genre : '/',
+    series : '/series',
+    season : '/season',
+    episode : '/episode'
 }

@@ -15,7 +15,7 @@ const Home = () => {
   };
 
   return (
-    <div style={{display:'flex', alignItems:'center', justifyContent:'space-between', padding:'20px'}}>
+    <div>
       <span>Home</span>
       <LogoutIcon onClick={fnLogout} />
     </div>
