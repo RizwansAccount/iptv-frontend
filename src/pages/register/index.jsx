@@ -14,15 +14,6 @@ const Register = () => {
 
   const [registerUser, { isLoading: isLoadingRegisterUser }] = useRegisterUserMutation();
 
-  // const [userInput, setUserInput] = useState({ first_name: "", last_name: "", email: "", password: "" });
-
-  // const fnOnChange = (e) => {
-  //   const name = e.target.name;
-  //   const value = e.target.value;
-
-  //   setUserInput((pre) => ({ ...pre, [name]: value }));
-  // };
-
   const fnRegister = async (event) => {
 
     event.preventDefault();
