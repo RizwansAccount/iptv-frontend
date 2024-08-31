@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import './style.css'
-import { useDeleteGenreMutation, useGetAllGenreQuery, useUpdateGenreMutation } from '../../redux/storeApis'
+import { useAddGenreMutation, useDeleteGenreMutation, useGetAllGenreQuery, useUpdateGenreMutation } from '../../redux/storeApis'
 import Loader from '../../components/Loader';
 import ViewList from '../../components/Views/ViewList';
 import Modal, { DeleteModal } from '../../components/Modal';
@@ -11,6 +11,7 @@ import ViewCrudContainer from '../../components/Views/ViewCrudContainer';
 
 const Genre = () => {
   const { data: allGenres, isLoading: isLoadingAllGenres } = useGetAllGenreQuery();
+  const [addGenre, { isLoading: isLoadingAddGenre }] = useAddGenreMutation();
   const [deleteGenre, { isLoading: isLoadingDeleteGenre }] = useDeleteGenreMutation();
   const [updateGenre, { isLoading: isLoadingUpdateGenre }] = useUpdateGenreMutation();
 
@@ -18,6 +19,7 @@ const Genre = () => {
 
   const [selectedGenre, setSelectedGenre] = useState(null);
   const [deleteGenreId, setDeleteGenreId] = useState(null);
+  const [addModal, setAddModal] = useState(false);
 
   const fnOnRevertDeleteView = (genre) => {
     const id = genre?._id;
@@ -55,10 +57,29 @@ const Genre = () => {
     }
   };
 
+  const fnAddGenre = async (body) => {
+    const checkValidation = body?.name;
+    if(checkValidation) {
+      try {
+        const result = await addGenre(body);
+        const response = result?.data;
+        if (response?.success) {
+          fnShowSnackBar('Genre added successfully!');
+          setSelectedGenre(null);
+          setAddModal(false);
+        }
+      } catch (error) {
+        fnShowSnackBar('something went wrong!', true);
+      }
+    } else {
+      fnShowSnackBar('please filled all fields', true);
+    }
+  };
+
   return (
     <>
-      { isLoadingAllGenres ? <Loader /> :
-        <ViewCrudContainer>
+      {isLoadingAllGenres ? <Loader /> :
+        <ViewCrudContainer onAdd={() => setAddModal(true)}>
           {allGenres?.map((genre) => {
             return (
               <ViewList>
@@ -76,13 +97,22 @@ const Genre = () => {
         </ViewCrudContainer>
       }
 
-      <Modal open={selectedGenre} onClose={() => setSelectedGenre(null)}>
-        <h3 style={{padding : '12px 0px'}} >Edit Genre</h3>
+      <Modal open={addModal} onClose={() => setAddModal(false)}>
+        <h3 style={{ padding: '12px 0px' }} >Add Genre</h3>
         <div>
           <p>Name</p>
           <Input value={selectedGenre?.name} onChange={(e) => setSelectedGenre((pre) => ({ ...pre, name: e.target.value }))} />
         </div>
-        <Button onClick={() => fnUpdateGenre({ _id: selectedGenre?._id, name: selectedGenre?.name })} isLoading={isLoadingUpdateGenre} style={{ width: 'fit-content' }} title={'Save'} />
+        <Button onClick={() => fnAddGenre({ name: selectedGenre?.name })} isLoading={isLoadingAddGenre} style={{ width: 'fit-content' }} title={'Save'} />
+      </Modal>
+
+      <Modal open={selectedGenre} onClose={() => setSelectedGenre(null)}>
+        <h3 style={{ padding: '12px 0px' }} >Edit Genre</h3>
+        <div>
+          <p>Name</p>
+          <Input value={selectedGenre?.name} onChange={(e) => setSelectedGenre((pre) => ({ ...pre, name: e.target.value }))} />
+        </div>
+        <Button onClick={() => fnUpdateGenre({ _id: selectedGenre?._id, name: selectedGenre?.name })} isLoading={isLoadingUpdateGenre} style={{ width: 'fit-content' }} title={'Update'} />
       </Modal>
 
       <DeleteModal open={deleteGenreId} onClose={() => setDeleteGenreId(null)}>

@@ -2,7 +2,7 @@ import React from 'react'
 import './style.css'
 import ViewList from '../ViewList'
 
-const ViewCrudContainer = ({ children }) => {
+const ViewCrudContainer = ({ children, onAdd }) => {
     return (
         <div className='crud_container'>
             
@@ -13,6 +13,8 @@ const ViewCrudContainer = ({ children }) => {
             </ViewList>
 
             {children}
+
+            <i onClick={onAdd} className="ri-add-line add_btn"></i>
 
         </div>
     )

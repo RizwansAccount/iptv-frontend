@@ -25,8 +25,9 @@ export const iptvApi = createApi({
         resendCode: builder.mutation({ query: (data) => ({ url: 'users/resend-code', method: 'POST', body: data }) }),
 
         getAllGenre: builder.query({ query: () => ({ url: 'genres' }), providesTags: () => [TAG_TYPES.genre], transformResponse: (res) => res?.data }),
-        deleteGenre: builder.mutation({ query: (id) => ({ url: `genres/${id}`, method: 'DELETE' }), invalidatesTags: [TAG_TYPES.genre] }),
 
+        addGenre : builder.mutation({ query: (data) => ({ url: 'genres', method: 'POST', body: data }), invalidatesTags: [TAG_TYPES.genre] }),
+        deleteGenre: builder.mutation({ query: (id) => ({ url: `genres/${id}`, method: 'DELETE' }), invalidatesTags: [TAG_TYPES.genre] }),
         updateGenre: builder.mutation({
             query: (data) => {
                 const { _id, ...bodyData } = data;
@@ -39,5 +40,5 @@ export const iptvApi = createApi({
 })
 
 export const { useRegisterUserMutation, useLoginUserMutation, useVerifyUserMutation, useResendCodeMutation,
-    useGetAllGenreQuery, useDeleteGenreMutation, useUpdateGenreMutation
+    useGetAllGenreQuery, useDeleteGenreMutation, useUpdateGenreMutation, useAddGenreMutation
 } = iptvApi;
