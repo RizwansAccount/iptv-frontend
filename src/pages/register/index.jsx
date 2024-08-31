@@ -14,30 +14,35 @@ const Register = () => {
 
   const [registerUser, { isLoading: isLoadingRegisterUser }] = useRegisterUserMutation();
 
-  const [userInput, setUserInput] = useState({ first_name: "", last_name: "", email: "", password: "" });
+  // const [userInput, setUserInput] = useState({ first_name: "", last_name: "", email: "", password: "" });
 
-  const fnOnChange = (e) => {
-    const name = e.target.name;
-    const value = e.target.value;
+  // const fnOnChange = (e) => {
+  //   const name = e.target.name;
+  //   const value = e.target.value;
 
-    setUserInput((pre) => ({ ...pre, [name]: value }));
-  };
+  //   setUserInput((pre) => ({ ...pre, [name]: value }));
+  // };
 
-  const fnRegister = async () => {
+  const fnRegister = async (event) => {
+
+    event.preventDefault();
+    
     const body = {
-      first_name: userInput.first_name,
-      last_name: userInput.last_name,
-      email: userInput.email,
-      password: userInput.password
+      first_name: event.target.first_name.value,
+      last_name: event.target.last_name.value,
+      email: event.target.email.value,
+      password: event.target.password.value
     };
 
-    if (userInput?.first_name && userInput?.last_name && userInput?.email && userInput?.password) {
+    const checkValidation = Object.values(body)?.every(value => value);
+
+    if (checkValidation) {
       try {
         const result = await registerUser(body);
         const response = result?.data;
         if (response?.success) {
           fnShowSnackBar(response?.message);
-          navigate(ROUTES.verification, { state: { email: userInput.email } });
+          navigate(ROUTES.verification, { state: { email : body.email } });
         } else {
           fnShowSnackBar(response?.message, true);
         }
@@ -55,21 +60,23 @@ const Register = () => {
 
       <h1 className='register_heading'>Sign Up for an Account</h1>
 
-      <div className='register_inputBox'>
-        <input value={userInput.first_name} name='first_name' type="text" className='input' placeholder='First Name' onChange={fnOnChange} />
-        <input value={userInput.last_name} name='last_name' type="text" className='input' placeholder='Last Name' onChange={fnOnChange} />
-        <input value={userInput.email} name='email' type="text" className='input' placeholder='Email' onChange={fnOnChange} />
-        <input value={userInput.password} name='password' type="text" className='input' placeholder='Password' onChange={fnOnChange} />
-      </div>
+      <form onSubmit={fnRegister} className='register_form'>
+        <div className='register_inputBox'>
+          <input name='first_name' type="text" className='input' placeholder='First Name' />
+          <input name='last_name' type="text" className='input' placeholder='Last Name' />
+          <input name='email' type="text" className='input' placeholder='Email' />
+          <input name='password' type="text" className='input' placeholder='Password' />
+        </div>
 
-      <div className='register_checkbox_container'>
-        <input type='checkbox' />
-        <span>
-          By creating an account means you agree to the <strong>Terms <br /> & Conditions</strong> and our <strong>Privacy Policy</strong>
-        </span>
-      </div>
+        <div className='register_checkbox_container'>
+          <input type='checkbox' />
+          <span>
+            By creating an account means you agree to the <strong>Terms <br /> & Conditions</strong> and our <strong>Privacy Policy</strong>
+          </span>
+        </div>
 
-      <Button title={'Sign Up'} isLoading={isLoadingRegisterUser} onClick={fnRegister} />
+        <Button title={'Sign Up'} isLoading={isLoadingRegisterUser} />
+      </form>
 
       <span onClick={() => navigate(ROUTES.login)} className='register_account_txt'>Already have an account? Sign In</span>
     </ViewAuth>

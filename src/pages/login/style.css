@@ -60,3 +60,9 @@
     align-items: center;
     gap: 6px;
 }
+
+.login_form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}

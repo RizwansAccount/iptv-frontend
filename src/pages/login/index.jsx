@@ -14,12 +14,14 @@ const Login = () => {
   const navigate = useNavigate();
   const { fnShowSnackBar } = useSnackBarManager();
 
-  const [loginUser, { isLoading : isLoadingLoginUser }] = useLoginUserMutation();
+  const [loginUser, { isLoading: isLoadingLoginUser }] = useLoginUserMutation();
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const fnLogin = async (event) => {
 
-  const fnLogin = async () => {
+    event.preventDefault();
+
+    const email = event.target.email.value;
+    const password = event.target.password.value;
 
     if (email && password) {
       try {
@@ -50,19 +52,22 @@ const Login = () => {
         <h3>Welcome back please enter your detail</h3>
       </div>
 
-      <div className='login_inputBox'>
-        <input value={email} name='email' type="text" className='input' placeholder='Email' onChange={(e) => setEmail(e.target.value)} />
-        <input value={password} name='password' type="text" className='input' placeholder='Password' onChange={(e) => setPassword(e.target.value)} />
-        <div className='rememberBox'>
-          <div className='login_checkbox_container'>
-            <input type='checkbox' />
-            <span>Remember me</span>
-          </div>
-          <span className='login_forgot_txt'>Forgot password ?</span>
-        </div>
-      </div>
+      <form onSubmit={fnLogin} className='login_form'>
 
-      <Button title={'Sign In'} isLoading={isLoadingLoginUser} onClick={fnLogin} />
+        <div className='login_inputBox'>
+          <input name='email' type="text" className='input' placeholder='Email' />
+          <input name='password' type="text" className='input' placeholder='Password' />
+          <div className='rememberBox'>
+            <div className='login_checkbox_container'>
+              <input type='checkbox' />
+              <span>Remember me</span>
+            </div>
+            <span className='login_forgot_txt'>Forgot password ?</span>
+          </div>
+        </div>
+
+        <Button title={'Sign In'} isLoading={isLoadingLoginUser} />
+      </form>
 
       <span onClick={() => navigate(ROUTES.register)} className='login_account_txt'>Don't have an account? Sign Up</span>
     </ViewAuth>

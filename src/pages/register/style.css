@@ -40,3 +40,9 @@
     align-items: center;
     gap: 6px;
 }
+
+.register_form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
