@@ -26,7 +26,7 @@ const Register = () => {
   const fnRegister = async (event) => {
 
     event.preventDefault();
-    
+
     const body = {
       first_name: event.target.first_name.value,
       last_name: event.target.last_name.value,
@@ -44,7 +44,7 @@ const Register = () => {
           fnShowSnackBar(response?.message);
           navigate(ROUTES.verification, { state: { email : body.email } });
         } else {
-          fnShowSnackBar(response?.message, true);
+          fnShowSnackBar(response?.message || 'something went wrong!', true);
         }
 
       } catch (error) {
