@@ -3,7 +3,7 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import { Config } from '../constants'
 import { getLocalStorage } from '../localStorage';
 
-const TAG_TYPES = { genre: 'genre', series: 'series', season: 'season', episode: 'episode' };
+const TAG_TYPES = { genre: 'genre', series: 'series', season: 'season', episode: 'episode', file : 'file' };
 
 export const iptvApi = createApi({
     reducerPath: 'pokemonApi',
@@ -16,16 +16,17 @@ export const iptvApi = createApi({
             return headers;
         },
     }),
-    tagTypes: [TAG_TYPES.genre, TAG_TYPES.episode, TAG_TYPES.season, TAG_TYPES.series],
+    tagTypes: [TAG_TYPES.genre, TAG_TYPES.episode, TAG_TYPES.season, TAG_TYPES.series, TAG_TYPES.file],
     endpoints: (builder) => ({
         
+        // auth Apis
         registerUser: builder.mutation({ query: (data) => ({ url: 'users/registration', method: 'POST', body: data, }) }),
         loginUser: builder.mutation({ query: (data) => ({ url: 'users/login', method: 'POST', body: data, }) }),
         verifyUser: builder.mutation({ query: (data) => ({ url: 'users/verify-code', method: 'POST', body: data }) }),
         resendCode: builder.mutation({ query: (data) => ({ url: 'users/resend-code', method: 'POST', body: data }) }),
 
+        // genre Apis
         getAllGenre: builder.query({ query: () => ({ url: 'genres' }), providesTags: () => [TAG_TYPES.genre], transformResponse: (res) => res?.data }),
-
         addGenre : builder.mutation({ query: (data) => ({ url: 'genres', method: 'POST', body: data }), invalidatesTags: [TAG_TYPES.genre] }),
         deleteGenre: builder.mutation({ query: (id) => ({ url: `genres/${id}`, method: 'DELETE' }), invalidatesTags: [TAG_TYPES.genre] }),
         updateGenre: builder.mutation({
@@ -36,9 +37,29 @@ export const iptvApi = createApi({
             invalidatesTags: [TAG_TYPES.genre]
         }),
 
+        //series Apis
+        getAllSeries: builder.query({ query: () => ({ url : 'series' }), providesTags: ()=> [TAG_TYPES.series], transformResponse: (res) => res?.data }),
+        addSeries: builder.mutation({ query: (data) => ({ url: 'series', method: 'POST', body: data }), invalidatesTags: [TAG_TYPES.series] }),
+        deleteSeries: builder.mutation({ query: (id) => ({ url: `series/${id}`, method: 'DELETE' }), invalidatesTags: [TAG_TYPES.series] }),
+        updateSeries: builder.mutation({
+            query: (data) => {
+                const { _id, ...bodyData } = data;
+                return { url: `series/${_id}`, method: 'PATCH', body: bodyData }
+            },
+            invalidatesTags: [TAG_TYPES.series]
+        }),
+
+        //file apis
+        getAllFiles: builder.query({ query: () => ({ url : 'file' }), transformResponse: (res) => res?.data }),
+        uploadFile: builder.mutation({ query: (data) => ({ url: 'file', method: 'POST', body : data }), invalidatesTags: [TAG_TYPES.file], transformResponse:(res)=> res?.data }),
+        getFile: builder.query({ query: (id) => ({ url : `file/${id}`}), providesTags: ()=> [TAG_TYPES.file], transformResponse: (res) => res?.data })
+
     }),
 })
 
-export const { useRegisterUserMutation, useLoginUserMutation, useVerifyUserMutation, useResendCodeMutation,
-    useGetAllGenreQuery, useDeleteGenreMutation, useUpdateGenreMutation, useAddGenreMutation
+export const { 
+    useRegisterUserMutation, useLoginUserMutation, useVerifyUserMutation, useResendCodeMutation,
+    useGetAllGenreQuery, useDeleteGenreMutation, useUpdateGenreMutation, useAddGenreMutation,
+    useGetAllSeriesQuery, useDeleteSeriesMutation, useUpdateSeriesMutation, useAddSeriesMutation,
+    useGetAllFilesQuery, useUploadFileMutation, useGetFileQuery
 } = iptvApi;

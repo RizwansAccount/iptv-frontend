@@ -20,6 +20,7 @@ const Genre = () => {
   const [selectedGenre, setSelectedGenre] = useState(null);
   const [deleteGenreId, setDeleteGenreId] = useState(null);
   const [addModal, setAddModal] = useState(false);
+  const [updateModal, setUpdateModal] = useState(false);
 
   const fnOnRevertDeleteView = (genre) => {
     const id = genre?._id;
@@ -50,7 +51,8 @@ const Genre = () => {
       const response = result?.data;
       if (response?.success) {
         fnShowSnackBar('Genre updated successfully!');
-        if (selectedGenre) { setSelectedGenre(null) };
+        setSelectedGenre(null);
+        setUpdateModal(false);
       }
     } catch (error) {
       fnShowSnackBar('something went wrong!', true);
@@ -86,7 +88,7 @@ const Genre = () => {
                 <p className='list'>{genre?.name}</p>
                 <p className='list'>{genre?.is_deleted ? 'Deleted' : 'Active'}</p>
                 <div className='edit_view_box list'>
-                  <p style={{ cursor: 'pointer' }} onClick={() => setSelectedGenre(genre)}>Edit</p>
+                  <p style={{ cursor: 'pointer' }} onClick={() => {setSelectedGenre(genre); setUpdateModal(true)}}>Edit</p>
                   <p style={{ cursor: 'pointer' }} onClick={() => fnOnRevertDeleteView(genre)}>
                     {genre?.is_deleted ? <i className="ri-reset-left-line"></i> : <i className="ri-delete-bin-6-line"></i>}
                   </p>
@@ -106,7 +108,7 @@ const Genre = () => {
         <Button onClick={() => fnAddGenre({ name: selectedGenre?.name })} isLoading={isLoadingAddGenre} style={{ width: 'fit-content' }} title={'Save'} />
       </Modal>
 
-      <Modal open={selectedGenre} onClose={() => setSelectedGenre(null)}>
+      <Modal open={updateModal} onClose={() => {setSelectedGenre(null); setUpdateModal(false)}}>
         <h3 style={{ padding: '12px 0px' }} >Edit Genre</h3>
         <div>
           <p>Name</p>
