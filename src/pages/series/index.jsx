@@ -126,15 +126,17 @@ const Series = () => {
   };
 
   const fnOnFileChange = (e) => {
-
     const file = e.target.files[0];
-
     if (file) {
       setSelectedSeries((pre) => ({ ...pre, file }));
       const imageUrl = URL.createObjectURL(file);
       setSelectedImage(imageUrl);
-    }
+    };
+  };
 
+  const fnOnChange = (e) => {
+    const {name, value} = e.target;
+    setSelectedSeries((pre)=> ({...pre, [name]: value}))
   };
 
   return (
@@ -160,15 +162,15 @@ const Series = () => {
       }
 
       <Modal open={addModal} onClose={() => { setAddModal(false); setSelectedImage(null) }}>
-        <h3 style={{ padding: '12px 0px' }} >Add Series</h3>
+        <h3 className='series_title' >Add Series</h3>
         <div className='inputs_container'>
           <p>Name</p>
-          <Input value={selectedSeries?.name} onChange={(e) => setSelectedSeries((pre) => ({ ...pre, name: e.target.value }))} />
+          <Input value={selectedSeries?.name} name={'name'} onChange={fnOnChange} />
           <p>Description</p>
-          <Input value={selectedSeries?.description} onChange={(e) => setSelectedSeries((pre) => ({ ...pre, description: e.target.value }))} />
+          <Input value={selectedSeries?.description} name={'description'} onChange={fnOnChange} />
           <p>Select File</p>
           <Input type='file' onChange={fnOnFileChange} />
-          {selectedImage && <img src={selectedImage} style={{ height: '150px', width: '300px', objectFit: 'cover', borderRadius: '4px' }} />}
+          {selectedImage && <img src={selectedImage} className='series_img' />}
         </div>
         <Button onClick={fnAddSeries} isLoading={isLoadingUploadFile || isLoadingAddSeries} style={{ width: 'fit-content' }} title={'Save'} />
       </Modal>
@@ -176,15 +178,15 @@ const Series = () => {
       <Modal open={updateModal} onClose={() => { setSelectedSeries(null); setSelectedImage(null); setUpdateModal(false) }}>
         {isLoadingFile ? <Loader /> :
           <>
-            <h3 style={{ padding: '12px 0px' }} >Edit Series</h3>
+            <h3 className='series_title' >Edit Series</h3>
             <div className='inputs_container'>
               <p>Name</p>
-              <Input value={selectedSeries?.name} onChange={(e) => setSelectedSeries((pre) => ({ ...pre, name: e.target.value }))} />
+              <Input value={selectedSeries?.name} name={'name'} onChange={fnOnChange} />
               <p>Description</p>
-              <Input value={selectedSeries?.description} onChange={(e) => setSelectedSeries((pre) => ({ ...pre, description: e.target.value }))} />
+              <Input value={selectedSeries?.description} name={'description'} onChange={fnOnChange} />
               <p>Select File</p>
               <Input type='file' onChange={fnOnFileChange} />
-              <img src={selectedImage ? selectedImage : (Config.imgUrl + file?.original_name)} style={{ height: '150px', width: '300px', objectFit: 'cover', borderRadius: '4px' }} />
+              <img src={selectedImage ? selectedImage : (Config.imgUrl + file?.original_name)} className='series_img' />
             </div>
 
             <Button onClick={fnUpdateSeries} isLoading={isLoadingUploadFile || isLoadingUpdateSeries} style={{ width: 'fit-content' }} title={'Update'} />
