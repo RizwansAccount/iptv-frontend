@@ -94,7 +94,7 @@ const Series = () => {
 
   const fnAddSeries = async () => {
 
-    const checkValidation = Object.values(selectedSeries)?.every(value => value);
+    const checkValidation = Object?.values(selectedSeries)?.every(value => value);
     if (checkValidation) {
       try {
         const file = selectedSeries?.file;
@@ -139,6 +139,15 @@ const Series = () => {
     setSelectedSeries((pre)=> ({...pre, [name]: value}))
   };
 
+  const fnOnModalClose =(type)=> {
+
+    setSelectedSeries({name : '', description: '', file: null}); 
+    setSelectedImage(null); 
+
+    if(type == 'update') { setUpdateModal(false); } 
+    else { setAddModal(false); }
+  }
+
   return (
     <>
       {isLoadingAllSeries ? <Loader />
@@ -161,31 +170,23 @@ const Series = () => {
         </ViewCrudContainer>
       }
 
-      <Modal open={addModal} onClose={() => { setAddModal(false); setSelectedImage(null) }}>
-        <h3 className='series_title' >Add Series</h3>
+      <Modal open={addModal} title='Add Series' onClose={fnOnModalClose}>
         <div className='inputs_container'>
-          <p>Name</p>
-          <Input value={selectedSeries?.name} name={'name'} onChange={fnOnChange} />
-          <p>Description</p>
-          <Input value={selectedSeries?.description} name={'description'} onChange={fnOnChange} />
-          <p>Select File</p>
-          <Input type='file' onChange={fnOnFileChange} />
+          <Input inputTitle='Name' value={selectedSeries?.name} name={'name'} onChange={fnOnChange} />
+          <Input inputTitle='Description' value={selectedSeries?.description} name={'description'} onChange={fnOnChange} />
+          <Input inputTitle='Select File' type='file' onChange={fnOnFileChange} />
           {selectedImage && <img src={selectedImage} className='series_img' />}
         </div>
         <Button onClick={fnAddSeries} isLoading={isLoadingUploadFile || isLoadingAddSeries} style={{ width: 'fit-content' }} title={'Save'} />
       </Modal>
 
-      <Modal open={updateModal} onClose={() => { setSelectedSeries(null); setSelectedImage(null); setUpdateModal(false) }}>
+      <Modal open={updateModal} title='Edit Series' onClose={() => fnOnModalClose('update')}>
         {isLoadingFile ? <Loader /> :
           <>
-            <h3 className='series_title' >Edit Series</h3>
             <div className='inputs_container'>
-              <p>Name</p>
-              <Input value={selectedSeries?.name} name={'name'} onChange={fnOnChange} />
-              <p>Description</p>
-              <Input value={selectedSeries?.description} name={'description'} onChange={fnOnChange} />
-              <p>Select File</p>
-              <Input type='file' onChange={fnOnFileChange} />
+              <Input inputTitle='Name' value={selectedSeries?.name} name={'name'} onChange={fnOnChange} />
+              <Input inputTitle='Description' value={selectedSeries?.description} name={'description'} onChange={fnOnChange} />
+              <Input inputTitle='Select File' type='file' onChange={fnOnFileChange} />
               <img src={selectedImage ? selectedImage : (Config.imgUrl + file?.original_name)} className='series_img' />
             </div>
 

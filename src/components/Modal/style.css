@@ -43,3 +43,7 @@
     font-size: 22px;
     cursor: pointer;
 }
+
+.modal_title {
+    padding: 12px 0px;
+}
