@@ -11,7 +11,7 @@ export function useSnackBarManager() {
 
         if (error) { dispatch(setErrorMessage(error)); };
         if (message) { dispatch(setSnackBarMessage(message)); };
-        setTimeout(() => { fnHideSnackBar() }, 3000);
+        setTimeout(() => { fnHideSnackBar() }, 2000);
     };
 
     const fnHideSnackBar = () => {
