@@ -29,13 +29,13 @@ const Series = () => {
 
   const { data: file, isLoading: isLoadingFile } = useGetFileQuery(selectedSeries?.thumbnail_id);
 
-  const fnOnRevertDeleteView = async(series) => {
+  const fnOnRevertDeleteView = async (series) => {
     const id = series?._id;
     const isDeleted = series?.is_deleted;
     if (isDeleted) {
-      const result = await updateSeries({_id : id, is_deleted : false});
+      const result = await updateSeries({ _id: id, is_deleted: false });
       const response = result?.data
-      if(response?.success) {
+      if (response?.success) {
         fnShowSnackBar('Series updated successfully!')
       }
     } else {
@@ -57,39 +57,39 @@ const Series = () => {
   };
 
   const fnUpdateSeries = async () => {
-      try {
-        const file = selectedSeries?.file;
+    try {
+      const file = selectedSeries?.file;
 
-        let tailer_id;
-        let thumbnail_id;
+      let tailer_id;
+      let thumbnail_id;
 
-        if(file) {
-          let formData = new FormData();
-          formData.append('file', file);
-          const fileResponse = await uploadFile(formData);
-          tailer_id = fileResponse?.data?._id;
-          thumbnail_id = fileResponse?.data?._id;
-        }
-
-        const body = {
-          _id : selectedSeries?._id, 
-          name: selectedSeries?.name, 
-          description: selectedSeries?.description, 
-          tailer_id : tailer_id??selectedSeries?.tailer_id, 
-          thumbnail_id : thumbnail_id?? selectedSeries?.thumbnail_id 
-        };
-
-        const result = await updateSeries(body);
-        const response = result?.data;
-        if (response?.success) {
-          fnShowSnackBar('Series updated successfully!')
-          setSelectedSeries(null)
-          setUpdateModal(false);
-        }
-
-      } catch (error) {
-        fnShowSnackBar('something went wrong!', true)
+      if (file) {
+        let formData = new FormData();
+        formData.append('file', file);
+        const fileResponse = await uploadFile(formData);
+        tailer_id = fileResponse?.data?._id;
+        thumbnail_id = fileResponse?.data?._id;
       }
+
+      const body = {
+        _id: selectedSeries?._id,
+        name: selectedSeries?.name,
+        description: selectedSeries?.description,
+        tailer_id: tailer_id ?? selectedSeries?.tailer_id,
+        thumbnail_id: thumbnail_id ?? selectedSeries?.thumbnail_id
+      };
+
+      const result = await updateSeries(body);
+      const response = result?.data;
+      if (response?.success) {
+        fnShowSnackBar('Series updated successfully!')
+        setSelectedSeries(null)
+        setUpdateModal(false);
+      }
+
+    } catch (error) {
+      fnShowSnackBar('something went wrong!', true)
+    }
   };
 
   const fnAddSeries = async () => {
@@ -174,28 +174,21 @@ const Series = () => {
       </Modal>
 
       <Modal open={updateModal} onClose={() => { setSelectedSeries(null); setSelectedImage(null); setUpdateModal(false) }}>
-        {
-          isLoadingFile ? <Loader /> :
-            <>
-              <h3 style={{ padding: '12px 0px' }} >Edit Series</h3>
-              <div className='inputs_container'>
-                <p>Name</p>
-                <Input value={selectedSeries?.name} onChange={(e) => setSelectedSeries((pre) => ({ ...pre, name: e.target.value }))} />
-                <p>Description</p>
-                <Input value={selectedSeries?.description} onChange={(e) => setSelectedSeries((pre) => ({ ...pre, description: e.target.value }))} />
-                <p>Select File</p>
-                <Input type='file' onChange={fnOnFileChange} />
-                <img src={selectedImage ? selectedImage : (Config.imgUrl + file?.original_name)} style={{ height: '150px', width: '300px', objectFit: 'cover', borderRadius: '4px' }} />
-              </div>
+        {isLoadingFile ? <Loader /> :
+          <>
+            <h3 style={{ padding: '12px 0px' }} >Edit Series</h3>
+            <div className='inputs_container'>
+              <p>Name</p>
+              <Input value={selectedSeries?.name} onChange={(e) => setSelectedSeries((pre) => ({ ...pre, name: e.target.value }))} />
+              <p>Description</p>
+              <Input value={selectedSeries?.description} onChange={(e) => setSelectedSeries((pre) => ({ ...pre, description: e.target.value }))} />
+              <p>Select File</p>
+              <Input type='file' onChange={fnOnFileChange} />
+              <img src={selectedImage ? selectedImage : (Config.imgUrl + file?.original_name)} style={{ height: '150px', width: '300px', objectFit: 'cover', borderRadius: '4px' }} />
+            </div>
 
-              <Button
-                onClick={fnUpdateSeries}
-                isLoading={isLoadingUpdateSeries}
-                style={{ width: 'fit-content' }}
-                title={'Update'}
-              />
-              {/* <Button onClick={() => fnUpdateSeries({ _id: selectedSeries?._id, name: selectedSeries?.name })} isLoading={isLoadingUpdateSeries} style={{ width: 'fit-content' }} title={'Update'} /> */}
-            </>
+            <Button onClick={fnUpdateSeries} isLoading={isLoadingUploadFile || isLoadingUpdateSeries} style={{ width: 'fit-content' }} title={'Update'} />
+          </>
         }
       </Modal>
 
