@@ -15,3 +15,28 @@ html, body, #root {
 :root {
   --primary: #4A6DA7;
 }
+
+.select_style {
+  padding: 12px;
+  width: 300px;
+  border-radius: 4px;
+  border: 1px solid lightgrey;
+  font-size: 16px;
+}
+
+.spacing {
+  margin-right: 22px;
+}
+
+.list {
+  width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.edit_view_box {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}

@@ -111,8 +111,8 @@ const Series = () => {
         const result = await addSeries(body);
         const response = result?.data;
         if (response?.success) {
-          fnShowSnackBar('Series added successfully!')
-          setSelectedSeries(null)
+          fnShowSnackBar('Series added successfully!');
+          setSelectedSeries({name : '', description: '', file: null}); 
           setAddModal(false);
         }
 
@@ -155,10 +155,10 @@ const Series = () => {
           {allSeries?.map((series) => {
             return (
               <ViewList>
-                <p className='series_list'>{series?.name}</p>
-                <p className='series_list'>{series?.description}</p>
-                <p className='series_list'>{series?.is_deleted ? 'Deleted' : 'Active'}</p>
-                <div className='series_edit_view_box list'>
+                <p className='list'>{series?.name}</p>
+                <p className='list spacing'>{series?.description}</p>
+                <p className='list'>{series?.is_deleted ? 'Deleted' : 'Active'}</p>
+                <div className='edit_view_box list'>
                   <p style={{ cursor: 'pointer' }} onClick={() => { setSelectedSeries(series); setUpdateModal(true) }}>Edit</p>
                   <p style={{ cursor: 'pointer' }} onClick={() => fnOnRevertDeleteView(series)}>
                     {series?.is_deleted ? <i className="ri-reset-left-line"></i> : <i className="ri-delete-bin-6-line"></i>}

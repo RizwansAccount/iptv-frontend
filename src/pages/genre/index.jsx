@@ -22,7 +22,7 @@ const Genre = () => {
   const [addModal, setAddModal] = useState(false);
   const [updateModal, setUpdateModal] = useState(false);
 
-  const fnOnRevertDeleteView = (genre) => {
+  const fnOnRevertDelete = (genre) => {
     const id = genre?._id;
     const isDeleted = genre?.is_deleted;
     if (isDeleted) {
@@ -89,7 +89,7 @@ const Genre = () => {
                 <p className='list'>{genre?.is_deleted ? 'Deleted' : 'Active'}</p>
                 <div className='edit_view_box list'>
                   <p style={{ cursor: 'pointer' }} onClick={() => {setSelectedGenre(genre); setUpdateModal(true)}}>Edit</p>
-                  <p style={{ cursor: 'pointer' }} onClick={() => fnOnRevertDeleteView(genre)}>
+                  <p style={{ cursor: 'pointer' }} onClick={() => fnOnRevertDelete(genre)}>
                     {genre?.is_deleted ? <i className="ri-reset-left-line"></i> : <i className="ri-delete-bin-6-line"></i>}
                   </p>
                 </div>

@@ -52,7 +52,19 @@ export const iptvApi = createApi({
         //file apis
         getAllFiles: builder.query({ query: () => ({ url : 'file' }), transformResponse: (res) => res?.data }),
         uploadFile: builder.mutation({ query: (data) => ({ url: 'file', method: 'POST', body : data }), invalidatesTags: [TAG_TYPES.file], transformResponse:(res)=> res?.data }),
-        getFile: builder.query({ query: (id) => ({ url : `file/${id}`}), providesTags: ()=> [TAG_TYPES.file], transformResponse: (res) => res?.data })
+        getFile: builder.query({ query: (id) => ({ url : `file/${id}`}), providesTags: ()=> [TAG_TYPES.file], transformResponse: (res) => res?.data }),
+
+        //season apis
+        getAllSeasons: builder.query({ query:()=> ({ url: 'seasons' }), providesTags:()=> [TAG_TYPES.season], transformResponse: (res) => res?.data }),
+        addSeason: builder.mutation({ query: (data) => ({ url: 'seasons', method: 'POST', body: data }), invalidatesTags: [TAG_TYPES.season] }),
+        deleteSeason: builder.mutation({ query: (id) => ({ url: `seasons/${id}`, method: 'DELETE' }), invalidatesTags: [TAG_TYPES.season] }),
+        updateSeason: builder.mutation({
+            query: (data) => {
+                const { _id, ...bodyData } = data;
+                return { url: `seasons/${_id}`, method: 'PATCH', body: bodyData }
+            },
+            invalidatesTags: [TAG_TYPES.season]
+        }),
 
     }),
 })
@@ -61,5 +73,6 @@ export const {
     useRegisterUserMutation, useLoginUserMutation, useVerifyUserMutation, useResendCodeMutation,
     useGetAllGenreQuery, useDeleteGenreMutation, useUpdateGenreMutation, useAddGenreMutation,
     useGetAllSeriesQuery, useDeleteSeriesMutation, useUpdateSeriesMutation, useAddSeriesMutation,
-    useGetAllFilesQuery, useUploadFileMutation, useGetFileQuery
+    useGetAllFilesQuery, useUploadFileMutation, useGetFileQuery,
+    useGetAllSeasonsQuery, useAddSeasonMutation, useUpdateSeasonMutation, useDeleteSeasonMutation
 } = iptvApi;

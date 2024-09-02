@@ -1,0 +1,16 @@
+.seasons_list {
+    width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.seasons_edit_view_box {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.spacing {
+    margin-right: 42px;
+}

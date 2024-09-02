@@ -1,6 +1,7 @@
 .crud_container {
     width: calc(100% - 350px);
     height: 100%;
+    overflow-y: scroll;
 }
 .add_btn {
     background-color: var(--primary);
