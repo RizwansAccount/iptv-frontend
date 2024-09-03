@@ -66,6 +66,18 @@ export const iptvApi = createApi({
             invalidatesTags: [TAG_TYPES.season]
         }),
 
+        //episode apis
+        getAllEpisodes: builder.query({ query:(search)=> ({ url: search ? `episodes?search=${search}` : 'episodes' }), providesTags:()=> [TAG_TYPES.episode], transformResponse: (res) => res?.data }),
+        addEpisode: builder.mutation({ query: (data) => ({ url: 'episodes', method: 'POST', body: data }), invalidatesTags: [TAG_TYPES.episode] }),
+        deleteEpisode: builder.mutation({ query: (id) => ({ url: `episodes/${id}`, method: 'DELETE' }), invalidatesTags: [TAG_TYPES.episode] }),
+        updateEpisode: builder.mutation({
+            query: (data) => {
+                const { _id, ...bodyData } = data;
+                return { url: `episodes/${_id}`, method: 'PATCH', body: bodyData }
+            },
+            invalidatesTags: [TAG_TYPES.episode]
+        }),
+
     }),
 })
 
@@ -74,5 +86,6 @@ export const {
     useGetAllGenreQuery, useDeleteGenreMutation, useUpdateGenreMutation, useAddGenreMutation,
     useGetAllSeriesQuery, useDeleteSeriesMutation, useUpdateSeriesMutation, useAddSeriesMutation,
     useGetAllFilesQuery, useUploadFileMutation, useGetFileQuery,
-    useGetAllSeasonsQuery, useAddSeasonMutation, useUpdateSeasonMutation, useDeleteSeasonMutation
+    useGetAllSeasonsQuery, useAddSeasonMutation, useUpdateSeasonMutation, useDeleteSeasonMutation,
+    useGetAllEpisodesQuery, useAddEpisodeMutation, useUpdateEpisodeMutation, useDeleteEpisodeMutation
 } = iptvApi;

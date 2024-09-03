@@ -72,7 +72,7 @@ const Season = () => {
     }
   };
 
-  const fnGetSeasonName = (id) => {
+  const fnGetSeriesName = (id) => {
     const name = allSeries?.find((series) => series?._id == id)?.name;
     return name;
   };
@@ -106,7 +106,7 @@ const Season = () => {
               <ViewList>
                 <p className='list'>{season?.name}</p>
                 <p className='list spacing'>{season?.description}</p>
-                <p className='list'>{fnGetSeasonName(series_id)}</p>
+                <p className='list'>{fnGetSeriesName(series_id)}</p>
                 <p className='list'>{season?.is_deleted ? 'Deleted' : 'Active'}</p>
                 <div className='edit_view_box list'>
                   <p style={{ cursor: 'pointer' }} onClick={() => fnOnEditSeason(season)} >Edit</p>

@@ -19,6 +19,12 @@ const ViewCrudContainer = ({ children, onAdd, type = 'genre' }) => {
                         <h4 className='list'>Series</h4>
                         <h4 className='list'>Status</h4>
                         <h4 className='list'>Action</h4>
+                    </> : type == 'episodes' ? <>
+                        <h4 className='list'>Name</h4>
+                        <h4 className='list spacing'>Description</h4>
+                        <h4 className='list'>Season</h4>
+                        <h4 className='list'>Status</h4>
+                        <h4 className='list'>Action</h4>
                     </>
                         : <>
                             <h4 className='list'>Name</h4>
