@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import './style.css'
 import { useAddGenreMutation, useDeleteGenreMutation, useGetAllGenreQuery, useUpdateGenreMutation } from '../../redux/storeApis'
 import Loader from '../../components/Loader';
@@ -8,14 +8,17 @@ import Button from '../../components/Button';
 import Input from '../../components/Input';
 import { useSnackBarManager } from '../../hooks/useSnackBarManager';
 import ViewCrudContainer from '../../components/Views/ViewCrudContainer';
+import { useSearchManager } from '../../hooks/useSearchManager';
 
 const Genre = () => {
-  const { data: allGenres, isLoading: isLoadingAllGenres } = useGetAllGenreQuery();
+
+  const { fnShowSnackBar } = useSnackBarManager();
+  const { searchTxt } = useSearchManager();
+
+  const { data: allGenres, isLoading: isLoadingAllGenres } = useGetAllGenreQuery(searchTxt);
   const [addGenre, { isLoading: isLoadingAddGenre }] = useAddGenreMutation();
   const [deleteGenre, { isLoading: isLoadingDeleteGenre }] = useDeleteGenreMutation();
   const [updateGenre, { isLoading: isLoadingUpdateGenre }] = useUpdateGenreMutation();
-
-  const { fnShowSnackBar } = useSnackBarManager();
 
   const [selectedGenre, setSelectedGenre] = useState(null);
   const [deleteGenreId, setDeleteGenreId] = useState(null);

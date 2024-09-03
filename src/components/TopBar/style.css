@@ -32,3 +32,15 @@
     font-size: 22px;
     cursor: pointer;
 }
+
+.search_box {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.search_icon_box {
+    background-color: white;
+    padding: 10px;
+    border-radius: 12px;
+}

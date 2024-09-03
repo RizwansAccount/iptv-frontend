@@ -9,16 +9,18 @@ import Button from '../../components/Button';
 import Input from '../../components/Input';
 import ViewList from '../../components/Views/ViewList';
 import { Config } from '../../constants';
+import { useSearchManager } from '../../hooks/useSearchManager';
 
 const Series = () => {
+  
+  const { fnShowSnackBar } = useSnackBarManager();
+  const { searchTxt } = useSearchManager();
 
-  const { data: allSeries, isLoading: isLoadingAllSeries } = useGetAllSeriesQuery();
+  const { data: allSeries, isLoading: isLoadingAllSeries } = useGetAllSeriesQuery(searchTxt);
   const [addSeries, { isLoading: isLoadingAddSeries }] = useAddSeriesMutation();
   const [deleteSeries, { isLoading: isLoadingDeleteSeries }] = useDeleteSeriesMutation();
   const [updateSeries, { isLoading: isLoadingUpdateSeries }] = useUpdateSeriesMutation();
   const [uploadFile, { isLoading: isLoadingUploadFile }] = useUploadFileMutation();
-
-  const { fnShowSnackBar } = useSnackBarManager();
 
   const [selectedSeries, setSelectedSeries] = useState({ name: '', description: '', file: null });
   const [deleteSeriesId, setDeleteSeriesId] = useState(null);

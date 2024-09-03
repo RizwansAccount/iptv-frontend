@@ -8,15 +8,19 @@ import Modal, { DeleteModal } from '../../components/Modal';
 import Input from '../../components/Input';
 import Button from '../../components/Button';
 import { useSnackBarManager } from '../../hooks/useSnackBarManager';
+import { useSearchManager } from '../../hooks/useSearchManager';
 
 const Season = () => {
-  const { data: allSeasons, isLoading: isLoadingAllSeasons } = useGetAllSeasonsQuery();
+
+  const { fnShowSnackBar } = useSnackBarManager();
+  const { searchTxt } = useSearchManager();
+
+  const { data: allSeasons, isLoading: isLoadingAllSeasons } = useGetAllSeasonsQuery(searchTxt);
   const { data: seriesData, isLoading: isLoadingSeriesData } = useGetAllSeriesQuery();
   const [addSeason, { isLoading: isLoadingAddSeason }] = useAddSeasonMutation();
   const [updateSeason, { isLoading: isLoadingUpdateSeason }] = useUpdateSeasonMutation();
   const [deleteSeason, { isLoading: isLoadingDeleteSeason }] = useDeleteSeasonMutation();
 
-  const { fnShowSnackBar } = useSnackBarManager();
 
   const allSeries = seriesData?.filter((series) => series?.is_deleted == false);
 

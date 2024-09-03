@@ -1,9 +1,11 @@
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import SnackBarReducer from "./SnackBarReducer";
 import { iptvApi } from "./storeApis";
+import SearchReducer from "./SearchReducer";
 
 const appReducer = combineReducers({
   SnackBarReducer,
+  SearchReducer,
   [iptvApi.reducerPath]: iptvApi.reducer
 })
 
@@ -12,5 +14,4 @@ export const store = configureStore({
 
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(iptvApi.middleware),
-
 })
