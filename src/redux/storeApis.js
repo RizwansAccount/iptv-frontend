@@ -26,7 +26,7 @@ export const iptvApi = createApi({
         resendCode: builder.mutation({ query: (data) => ({ url: 'users/resend-code', method: 'POST', body: data }) }),
 
         // genre Apis
-        getAllGenre: builder.query({ query: (search) => ({ url: `genres?search=${search}` }), providesTags: () => [TAG_TYPES.genre], transformResponse: (res) => res?.data }),
+        getAllGenre: builder.query({ query: (search) => ({ url: search ? `genres?search=${search}` : 'genres' }), providesTags: () => [TAG_TYPES.genre], transformResponse: (res) => res?.data }),
         addGenre : builder.mutation({ query: (data) => ({ url: 'genres', method: 'POST', body: data }), invalidatesTags: [TAG_TYPES.genre] }),
         deleteGenre: builder.mutation({ query: (id) => ({ url: `genres/${id}`, method: 'DELETE' }), invalidatesTags: [TAG_TYPES.genre] }),
         updateGenre: builder.mutation({
@@ -38,7 +38,7 @@ export const iptvApi = createApi({
         }),
 
         //series Apis
-        getAllSeries: builder.query({ query: (search) => ({ url : `series?search=${search}` }), providesTags: ()=> [TAG_TYPES.series], transformResponse: (res) => res?.data }),
+        getAllSeries: builder.query({ query: (search) => ({ url : search ? `series?search=${search}` : 'series' }), providesTags: ()=> [TAG_TYPES.series], transformResponse: (res) => res?.data }),
         addSeries: builder.mutation({ query: (data) => ({ url: 'series', method: 'POST', body: data }), invalidatesTags: [TAG_TYPES.series] }),
         deleteSeries: builder.mutation({ query: (id) => ({ url: `series/${id}`, method: 'DELETE' }), invalidatesTags: [TAG_TYPES.series] }),
         updateSeries: builder.mutation({
@@ -55,7 +55,7 @@ export const iptvApi = createApi({
         getFile: builder.query({ query: (id) => ({ url : `file/${id}`}), providesTags: ()=> [TAG_TYPES.file], transformResponse: (res) => res?.data }),
 
         //season apis
-        getAllSeasons: builder.query({ query:(search)=> ({ url: `seasons?search=${search}` }), providesTags:()=> [TAG_TYPES.season], transformResponse: (res) => res?.data }),
+        getAllSeasons: builder.query({ query:(search)=> ({ url: search ? `seasons?search=${search}` : 'seasons' }), providesTags:()=> [TAG_TYPES.season], transformResponse: (res) => res?.data }),
         addSeason: builder.mutation({ query: (data) => ({ url: 'seasons', method: 'POST', body: data }), invalidatesTags: [TAG_TYPES.season] }),
         deleteSeason: builder.mutation({ query: (id) => ({ url: `seasons/${id}`, method: 'DELETE' }), invalidatesTags: [TAG_TYPES.season] }),
         updateSeason: builder.mutation({

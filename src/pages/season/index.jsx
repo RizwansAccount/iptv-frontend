@@ -21,7 +21,6 @@ const Season = () => {
   const [updateSeason, { isLoading: isLoadingUpdateSeason }] = useUpdateSeasonMutation();
   const [deleteSeason, { isLoading: isLoadingDeleteSeason }] = useDeleteSeasonMutation();
 
-
   const allSeries = seriesData?.filter((series) => series?.is_deleted == false);
 
   const [addModal, setAddModal] = useState(false);
@@ -138,7 +137,7 @@ const Season = () => {
         <Input inputTitle='Description' value={selectedSeason?.description} name={'description'} onChange={fnOnChange} />
         <p>{'Select Series'}</p>
         <select className='select_style' value={selectedSeason?.series_id} name='series_id' onChange={fnOnChange}>
-          <option hidden >Select Season</option>
+          <option hidden >Select Series</option>
           {allSeries?.map((series) => <option value={series?._id}>{series?.name}</option>)}
         </select>
         <Button title={'Update'} isLoading={isLoadingUpdateSeason} onClick={()=>fnUpdateSeason({ ...selectedSeason })} style={{ width: 'fit-content' }} />
