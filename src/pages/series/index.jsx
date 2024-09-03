@@ -3,7 +3,7 @@ import './style.css'
 import { useAddSeriesMutation, useDeleteSeriesMutation, useGetAllSeriesQuery, useGetFileQuery, useUpdateSeriesMutation, useUploadFileMutation } from '../../redux/storeApis'
 import ViewCrudContainer from '../../components/Views/ViewCrudContainer';
 import { useSnackBarManager } from '../../hooks/useSnackBarManager';
-import Loader from '../../components/Loader';
+import Loader, { EmptyLoader } from '../../components/Loader';
 import Modal, { DeleteModal } from '../../components/Modal';
 import Button from '../../components/Button';
 import Input from '../../components/Input';
@@ -16,7 +16,7 @@ const Series = () => {
   const { fnShowSnackBar } = useSnackBarManager();
   const { searchTxt } = useSearchManager();
 
-  const { data: allSeries, isLoading: isLoadingAllSeries } = useGetAllSeriesQuery(searchTxt);
+  const { data: allSeries, isLoading: isLoadingAllSeries, isFetching : isFetchingSeries } = useGetAllSeriesQuery(searchTxt);
   const [addSeries, { isLoading: isLoadingAddSeries }] = useAddSeriesMutation();
   const [deleteSeries, { isLoading: isLoadingDeleteSeries }] = useDeleteSeriesMutation();
   const [updateSeries, { isLoading: isLoadingUpdateSeries }] = useUpdateSeriesMutation();
@@ -152,23 +152,26 @@ const Series = () => {
 
   return (
     <>
-      {isLoadingAllSeries ? <Loader />
+      {(isLoadingAllSeries || isFetchingSeries) ? <Loader />
         : <ViewCrudContainer type='series' onAdd={() => setAddModal(true)}>
-          {allSeries?.map((series) => {
-            return (
-              <ViewList>
-                <p className='list'>{series?.name}</p>
-                <p className='list spacing'>{series?.description}</p>
-                <p className='list'>{series?.is_deleted ? 'Deleted' : 'Active'}</p>
-                <div className='edit_view_box list'>
-                  <p style={{ cursor: 'pointer' }} onClick={() => { setSelectedSeries(series); setUpdateModal(true) }}>Edit</p>
-                  <p style={{ cursor: 'pointer' }} onClick={() => fnOnRevertDeleteView(series)}>
-                    {series?.is_deleted ? <i className="ri-reset-left-line"></i> : <i className="ri-delete-bin-6-line"></i>}
-                  </p>
-                </div>
-              </ViewList>
-            )
-          })}
+          {
+            allSeries?.length > 0 ? allSeries?.map((series) => {
+              return (
+                <ViewList>
+                  <p className='list'>{series?.name}</p>
+                  <p className='list spacing'>{series?.description}</p>
+                  <p className='list'>{series?.is_deleted ? 'Deleted' : 'Active'}</p>
+                  <div className='edit_view_box list'>
+                    <p style={{ cursor: 'pointer' }} onClick={() => { setSelectedSeries(series); setUpdateModal(true) }}>Edit</p>
+                    <p style={{ cursor: 'pointer' }} onClick={() => fnOnRevertDeleteView(series)}>
+                      {series?.is_deleted ? <i className="ri-reset-left-line"></i> : <i className="ri-delete-bin-6-line"></i>}
+                    </p>
+                  </div>
+                </ViewList>
+              )
+            })
+            : <EmptyLoader/>
+          }
         </ViewCrudContainer>
       }
 

@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import './style.css'
 import { useAddSeasonMutation, useDeleteSeasonMutation, useGetAllSeasonsQuery, useGetAllSeriesQuery, useUpdateSeasonMutation } from '../../redux/storeApis'
-import Loader from '../../components/Loader';
+import Loader, { EmptyLoader } from '../../components/Loader';
 import ViewCrudContainer from '../../components/Views/ViewCrudContainer';
 import ViewList from '../../components/Views/ViewList';
 import Modal, { DeleteModal } from '../../components/Modal';
@@ -15,7 +15,7 @@ const Season = () => {
   const { fnShowSnackBar } = useSnackBarManager();
   const { searchTxt } = useSearchManager();
 
-  const { data: allSeasons, isLoading: isLoadingAllSeasons } = useGetAllSeasonsQuery(searchTxt);
+  const { data: allSeasons, isLoading: isLoadingAllSeasons, isFetching : isFetchingSeasons } = useGetAllSeasonsQuery(searchTxt);
   const { data: seriesData, isLoading: isLoadingSeriesData } = useGetAllSeriesQuery();
   const [addSeason, { isLoading: isLoadingAddSeason }] = useAddSeasonMutation();
   const [updateSeason, { isLoading: isLoadingUpdateSeason }] = useUpdateSeasonMutation();
@@ -98,27 +98,30 @@ const Season = () => {
 
   return (
     <>
-      {isLoadingAllSeasons ? <Loader />
+      {(isLoadingAllSeasons || isFetchingSeasons) ? <Loader />
         : <ViewCrudContainer onAdd={() => setAddModal(true)} type='seasons' >
-          {allSeasons?.map((season) => {
-            const series_id = season?.series_id;
-            return (
-              <ViewList>
-                <p className='list'>{season?.name}</p>
-                <p className='list spacing'>{season?.description}</p>
-                <p className='list'>{fnGetSeriesName(series_id)}</p>
-                <p className='list'>{season?.is_deleted ? 'Deleted' : 'Active'}</p>
-                <div className='edit_view_box list'>
-                  <p style={{ cursor: 'pointer' }} onClick={() => fnOnEditSeason(season)} >Edit</p>
-                  <p style={{ cursor: 'pointer' }}  >
-                    {season?.is_deleted ?
-                      <i onClick={()=> fnUpdateSeason({ _id : season?._id, is_deleted : false})} className="ri-reset-left-line"></i>
-                      : <i onClick={() => setDeleteSeasonId(season?._id)} className="ri-delete-bin-6-line"></i>}
-                  </p>
-                </div>
-              </ViewList>
-            )
-          })}
+          {
+            allSeasons?.length > 0 ? allSeasons?.map((season) => {
+              const series_id = season?.series_id;
+              return (
+                <ViewList>
+                  <p className='list'>{season?.name}</p>
+                  <p className='list spacing'>{season?.description}</p>
+                  <p className='list'>{fnGetSeriesName(series_id)}</p>
+                  <p className='list'>{season?.is_deleted ? 'Deleted' : 'Active'}</p>
+                  <div className='edit_view_box list'>
+                    <p style={{ cursor: 'pointer' }} onClick={() => fnOnEditSeason(season)} >Edit</p>
+                    <p style={{ cursor: 'pointer' }}  >
+                      {season?.is_deleted ?
+                        <i onClick={()=> fnUpdateSeason({ _id : season?._id, is_deleted : false})} className="ri-reset-left-line"></i>
+                        : <i onClick={() => setDeleteSeasonId(season?._id)} className="ri-delete-bin-6-line"></i>}
+                    </p>
+                  </div>
+                </ViewList>
+              )
+            })
+            : <EmptyLoader/>
+          }
         </ViewCrudContainer>}
 
       <Modal open={addModal} title='Add Season' onClose={fnOnModalClose}>

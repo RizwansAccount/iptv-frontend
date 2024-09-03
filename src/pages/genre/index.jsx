@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import './style.css'
 import { useAddGenreMutation, useDeleteGenreMutation, useGetAllGenreQuery, useUpdateGenreMutation } from '../../redux/storeApis'
-import Loader from '../../components/Loader';
+import Loader, { EmptyLoader } from '../../components/Loader';
 import ViewList from '../../components/Views/ViewList';
 import Modal, { DeleteModal } from '../../components/Modal';
 import Button from '../../components/Button';
@@ -15,7 +15,7 @@ const Genre = () => {
   const { fnShowSnackBar } = useSnackBarManager();
   const { searchTxt } = useSearchManager();
 
-  const { data: allGenres, isLoading: isLoadingAllGenres } = useGetAllGenreQuery(searchTxt);
+  const { data: allGenres, isLoading: isLoadingAllGenres, isFetching : isFetchingGenres } = useGetAllGenreQuery(searchTxt);
   const [addGenre, { isLoading: isLoadingAddGenre }] = useAddGenreMutation();
   const [deleteGenre, { isLoading: isLoadingDeleteGenre }] = useDeleteGenreMutation();
   const [updateGenre, { isLoading: isLoadingUpdateGenre }] = useUpdateGenreMutation();
@@ -83,22 +83,24 @@ const Genre = () => {
 
   return (
     <>
-      {isLoadingAllGenres ? <Loader /> :
+      {(isLoadingAllGenres || isFetchingGenres )? <Loader /> :
         <ViewCrudContainer onAdd={() => setAddModal(true)}>
-          {allGenres?.map((genre) => {
-            return (
-              <ViewList>
-                <p className='list'>{genre?.name}</p>
-                <p className='list'>{genre?.is_deleted ? 'Deleted' : 'Active'}</p>
-                <div className='edit_view_box list'>
-                  <p style={{ cursor: 'pointer' }} onClick={() => {setSelectedGenre(genre); setUpdateModal(true)}}>Edit</p>
-                  <p style={{ cursor: 'pointer' }} onClick={() => fnOnRevertDelete(genre)}>
-                    {genre?.is_deleted ? <i className="ri-reset-left-line"></i> : <i className="ri-delete-bin-6-line"></i>}
-                  </p>
-                </div>
-              </ViewList>
-            )
-          })}
+          { allGenres?.length > 0 ? allGenres?.map((genre) => {
+              return (
+                <ViewList>
+                  <p className='list'>{genre?.name}</p>
+                  <p className='list'>{genre?.is_deleted ? 'Deleted' : 'Active'}</p>
+                  <div className='edit_view_box list'>
+                    <p style={{ cursor: 'pointer' }} onClick={() => {setSelectedGenre(genre); setUpdateModal(true)}}>Edit</p>
+                    <p style={{ cursor: 'pointer' }} onClick={() => fnOnRevertDelete(genre)}>
+                      {genre?.is_deleted ? <i className="ri-reset-left-line"></i> : <i className="ri-delete-bin-6-line"></i>}
+                    </p>
+                  </div>
+                </ViewList>
+              )
+            }) 
+            : <EmptyLoader/>
+          }
         </ViewCrudContainer>
       }
 

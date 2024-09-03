@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import './style.css'
 import { useAddEpisodeMutation, useDeleteEpisodeMutation, useGetAllEpisodesQuery, useGetAllSeasonsQuery, useUpdateEpisodeMutation } from '../../redux/storeApis'
 import ViewCrudContainer from '../../components/Views/ViewCrudContainer';
-import Loader from '../../components/Loader';
+import Loader, { EmptyLoader } from '../../components/Loader';
 import ViewList from '../../components/Views/ViewList';
 import { useSnackBarManager } from '../../hooks/useSnackBarManager';
 import Modal, { DeleteModal } from '../../components/Modal';
@@ -15,7 +15,7 @@ const Episode = () => {
   const { fnShowSnackBar } = useSnackBarManager();
   const { searchTxt } = useSearchManager();
 
-  const { data: allEpisodes, isLoading: isLoadingAllEpisodes } = useGetAllEpisodesQuery(searchTxt);
+  const { data: allEpisodes, isLoading: isLoadingAllEpisodes, isFetching : isFetchingEpisodes } = useGetAllEpisodesQuery(searchTxt);
   const { data: allSeasons, isLoading: isLoadingAllSeasons } = useGetAllSeasonsQuery();
   const [addEpisode, { isLoading: isLoadingAddEpisode }] = useAddEpisodeMutation();
   const [updateEpisode, { isLoading: isLoadingUpdateEpisode }] = useUpdateEpisodeMutation();
@@ -97,26 +97,29 @@ const Episode = () => {
   return (
     <>
       {
-        isLoadingAllEpisodes ? <Loader />
+        (isLoadingAllEpisodes || isFetchingEpisodes) ? <Loader />
           : <ViewCrudContainer type='episodes' >
-            {allEpisodes?.map((episode) => {
-              return (
-                <ViewList>
-                  <p className='list'>{episode?.name}</p>
-                  <p className='list spacing'>{episode?.description}</p>
-                  <p className='list'>{fnGetSeasonName(episode?.season_id)}</p>
-                  <p className='list'>{episode?.is_deleted ? 'Deleted' : 'Active'}</p>
-                  <div className='edit_view_box list'>
-                    <p style={{ cursor: 'pointer' }} onClick={() => fnOnEditEpisode(episode)} >Edit</p>
-                    <p style={{ cursor: 'pointer' }}  >
-                      {episode?.is_deleted ?
-                        <i onClick={() => fnUpdateEpisode({ _id: episode?._id, is_deleted: false })} className="ri-reset-left-line"></i>
-                        : <i onClick={() => setDeleteEpisodeId(episode?._id)} className="ri-delete-bin-6-line"></i>}
-                    </p>
-                  </div>
-                </ViewList>
-              )
-            })}
+            {
+              allEpisodes?.length > 0 ? allEpisodes?.map((episode) => {
+                return (
+                  <ViewList>
+                    <p className='list'>{episode?.name}</p>
+                    <p className='list spacing'>{episode?.description}</p>
+                    <p className='list'>{fnGetSeasonName(episode?.season_id)}</p>
+                    <p className='list'>{episode?.is_deleted ? 'Deleted' : 'Active'}</p>
+                    <div className='edit_view_box list'>
+                      <p style={{ cursor: 'pointer' }} onClick={() => fnOnEditEpisode(episode)} >Edit</p>
+                      <p style={{ cursor: 'pointer' }}  >
+                        {episode?.is_deleted ?
+                          <i onClick={() => fnUpdateEpisode({ _id: episode?._id, is_deleted: false })} className="ri-reset-left-line"></i>
+                          : <i onClick={() => setDeleteEpisodeId(episode?._id)} className="ri-delete-bin-6-line"></i>}
+                      </p>
+                    </div>
+                  </ViewList>
+                )
+              })
+              : <EmptyLoader/>
+            }
           </ViewCrudContainer>
       }
 
