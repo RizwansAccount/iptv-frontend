@@ -11,7 +11,7 @@
     align-items: center;
     justify-content: space-between;
     height: 100%;
-    padding: 0px 12px;
+    padding: 0px 14px;
 }
 
 .top_bar2 {
@@ -20,7 +20,7 @@
     align-items: center;
     justify-content: space-between;
     padding: 0px 12px;
-    width: calc(100% - 350px);
+    width: 100%;
     background-color: #FE938B;
 }
 

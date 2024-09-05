@@ -9,13 +9,18 @@ import Modal, { DeleteModal } from '../../components/Modal';
 import Button from '../../components/Button';
 import Input from '../../components/Input';
 import { useSearchManager } from '../../hooks/useSearchManager';
+import { useGetAllListManager } from '../../hooks/useGetAllListManager';
+import { usePaginationManger } from '../../hooks/usePaginationManager';
+import { Pagination } from 'antd';
 
 const Episode = () => {
 
   const { fnShowSnackBar } = useSnackBarManager();
   const { searchTxt } = useSearchManager();
+  const { totalEpisodes } = useGetAllListManager();
+  const { defaultCurrent, pageSize, pageSizeOptions, fnOnChangePagination } = usePaginationManger();
 
-  const { data: allEpisodes, isLoading: isLoadingAllEpisodes, isFetching : isFetchingEpisodes } = useGetAllEpisodesQuery(searchTxt);
+  const { data: allEpisodes, isLoading: isLoadingAllEpisodes, isFetching: isFetchingEpisodes } = useGetAllEpisodesQuery({ search: searchTxt, page: defaultCurrent, limit: pageSize });
   const { data: allSeasons, isLoading: isLoadingAllSeasons } = useGetAllSeasonsQuery();
   const [addEpisode, { isLoading: isLoadingAddEpisode }] = useAddEpisodeMutation();
   const [updateEpisode, { isLoading: isLoadingUpdateEpisode }] = useUpdateEpisodeMutation();
@@ -95,7 +100,7 @@ const Episode = () => {
   };
 
   return (
-    <>
+    <div className='view_page_container'>
       {
         (isLoadingAllEpisodes || isFetchingEpisodes) ? <Loader />
           : <ViewCrudContainer type='episodes' >
@@ -118,10 +123,21 @@ const Episode = () => {
                   </ViewList>
                 )
               })
-              : <EmptyLoader/>
+                : <EmptyLoader />
             }
           </ViewCrudContainer>
       }
+
+      {!isLoadingAllEpisodes && <div className='pagination_container'>
+        <Pagination
+          defaultCurrent={defaultCurrent}
+          showSizeChanger
+          total={totalEpisodes}
+          pageSizeOptions={pageSizeOptions}
+          pageSize={pageSize}
+          onChange={fnOnChangePagination}
+        />
+      </div>}
 
       <Modal open={addModal} title='Add Episode' onClose={fnOnModalClose}>
         <Input inputTitle='Name' value={selectedEpisode?.name} name={'name'} onChange={fnOnChange} />
@@ -150,7 +166,7 @@ const Episode = () => {
         <Button onClick={fnDelete} title={'Delete'} isLoading={isLoadingDeleteEpisode} style={{ width: 'fit-content', backgroundColor: '#c53030', minWidth: '120px' }} />
       </DeleteModal>
 
-    </>
+    </div>
   )
 }
 

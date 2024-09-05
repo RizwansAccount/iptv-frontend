@@ -10,13 +10,18 @@ import Input from '../../components/Input';
 import ViewList from '../../components/Views/ViewList';
 import { Config } from '../../constants';
 import { useSearchManager } from '../../hooks/useSearchManager';
+import { useGetAllListManager } from '../../hooks/useGetAllListManager';
+import { usePaginationManger } from '../../hooks/usePaginationManager';
+import { Pagination } from 'antd';
 
 const Series = () => {
-  
+
   const { fnShowSnackBar } = useSnackBarManager();
   const { searchTxt } = useSearchManager();
+  const { totalSeries } = useGetAllListManager();
+  const { defaultCurrent, pageSize, pageSizeOptions, fnOnChangePagination } = usePaginationManger();
 
-  const { data: allSeries, isLoading: isLoadingAllSeries, isFetching : isFetchingSeries } = useGetAllSeriesQuery(searchTxt);
+  const { data: allSeries, isLoading: isLoadingAllSeries, isFetching: isFetchingSeries } = useGetAllSeriesQuery({ search: searchTxt, page: defaultCurrent, limit: pageSize });
   const [addSeries, { isLoading: isLoadingAddSeries }] = useAddSeriesMutation();
   const [deleteSeries, { isLoading: isLoadingDeleteSeries }] = useDeleteSeriesMutation();
   const [updateSeries, { isLoading: isLoadingUpdateSeries }] = useUpdateSeriesMutation();
@@ -114,7 +119,8 @@ const Series = () => {
         const response = result?.data;
         if (response?.success) {
           fnShowSnackBar('Series added successfully!');
-          setSelectedSeries({name : '', description: '', file: null}); 
+          setSelectedSeries({ name: '', description: '', file: null });
+          setSelectedImage(false);
           setAddModal(false);
         }
 
@@ -137,21 +143,21 @@ const Series = () => {
   };
 
   const fnOnChange = (e) => {
-    const {name, value} = e.target;
-    setSelectedSeries((pre)=> ({...pre, [name]: value}))
+    const { name, value } = e.target;
+    setSelectedSeries((pre) => ({ ...pre, [name]: value }))
   };
 
-  const fnOnModalClose =(type)=> {
+  const fnOnModalClose = (type) => {
 
-    setSelectedSeries({name : '', description: '', file: null}); 
-    setSelectedImage(null); 
+    setSelectedSeries({ name: '', description: '', file: null });
+    setSelectedImage(null);
 
-    if(type == 'update') { setUpdateModal(false); } 
+    if (type == 'update') { setUpdateModal(false); }
     else { setAddModal(false); }
   }
 
   return (
-    <>
+    <div className='view_page_container'>
       {(isLoadingAllSeries || isFetchingSeries) ? <Loader />
         : <ViewCrudContainer type='series' onAdd={() => setAddModal(true)}>
           {
@@ -170,10 +176,21 @@ const Series = () => {
                 </ViewList>
               )
             })
-            : <EmptyLoader/>
+              : <EmptyLoader />
           }
         </ViewCrudContainer>
       }
+
+      {!isLoadingAllSeries && <div className='pagination_container'>
+        <Pagination
+          defaultCurrent={defaultCurrent}
+          showSizeChanger
+          total={totalSeries}
+          pageSizeOptions={pageSizeOptions}
+          pageSize={pageSize}
+          onChange={fnOnChangePagination}
+        />
+      </div>}
 
       <Modal open={addModal} title='Add Series' onClose={fnOnModalClose}>
         <div className='inputs_container'>
@@ -205,7 +222,7 @@ const Series = () => {
         <Button onClick={fnDeleteSeries} title={'Delete'} isLoading={isLoadingDeleteSeries} style={{ width: 'fit-content', backgroundColor: '#c53030', minWidth: '120px' }} />
       </DeleteModal>
 
-    </>
+    </div>
   )
 }
 

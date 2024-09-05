@@ -40,3 +40,17 @@ html, body, #root {
   align-items: center;
   gap: 12px;
 }
+
+.view_page_container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+}
+
+.pagination_container {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 24px 0px;
+}

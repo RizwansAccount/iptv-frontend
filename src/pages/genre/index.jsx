@@ -9,13 +9,18 @@ import Input from '../../components/Input';
 import { useSnackBarManager } from '../../hooks/useSnackBarManager';
 import ViewCrudContainer from '../../components/Views/ViewCrudContainer';
 import { useSearchManager } from '../../hooks/useSearchManager';
+import { useGetAllListManager } from '../../hooks/useGetAllListManager';
+import { usePaginationManger } from '../../hooks/usePaginationManager';
+import { Pagination } from 'antd';
 
 const Genre = () => {
 
   const { fnShowSnackBar } = useSnackBarManager();
   const { searchTxt } = useSearchManager();
+  const { totalGenres } = useGetAllListManager();
+  const { defaultCurrent, pageSize, pageSizeOptions, fnOnChangePagination } = usePaginationManger();
 
-  const { data: allGenres, isLoading: isLoadingAllGenres, isFetching : isFetchingGenres } = useGetAllGenreQuery(searchTxt);
+  const { data: allGenres, isLoading: isLoadingAllGenres, isFetching: isFetchingGenres } = useGetAllGenreQuery({ search: searchTxt, page: defaultCurrent, limit: pageSize });
   const [addGenre, { isLoading: isLoadingAddGenre }] = useAddGenreMutation();
   const [deleteGenre, { isLoading: isLoadingDeleteGenre }] = useDeleteGenreMutation();
   const [updateGenre, { isLoading: isLoadingUpdateGenre }] = useUpdateGenreMutation();
@@ -64,7 +69,7 @@ const Genre = () => {
 
   const fnAddGenre = async (body) => {
     const checkValidation = body?.name;
-    if(checkValidation) {
+    if (checkValidation) {
       try {
         const result = await addGenre(body);
         const response = result?.data;
@@ -82,27 +87,38 @@ const Genre = () => {
   };
 
   return (
-    <>
-      {(isLoadingAllGenres || isFetchingGenres )? <Loader /> :
+    <div className='view_page_container'>
+      {(isLoadingAllGenres || isFetchingGenres) ? <Loader /> :
         <ViewCrudContainer onAdd={() => setAddModal(true)}>
-          { allGenres?.length > 0 ? allGenres?.map((genre) => {
-              return (
-                <ViewList>
-                  <p className='list'>{genre?.name}</p>
-                  <p className='list'>{genre?.is_deleted ? 'Deleted' : 'Active'}</p>
-                  <div className='edit_view_box list'>
-                    <p style={{ cursor: 'pointer' }} onClick={() => {setSelectedGenre(genre); setUpdateModal(true)}}>Edit</p>
-                    <p style={{ cursor: 'pointer' }} onClick={() => fnOnRevertDelete(genre)}>
-                      {genre?.is_deleted ? <i className="ri-reset-left-line"></i> : <i className="ri-delete-bin-6-line"></i>}
-                    </p>
-                  </div>
-                </ViewList>
-              )
-            }) 
-            : <EmptyLoader/>
+          {allGenres?.length > 0 ? allGenres?.map((genre) => {
+            return (
+              <ViewList>
+                <p className='list'>{genre?.name}</p>
+                <p className='list'>{genre?.is_deleted ? 'Deleted' : 'Active'}</p>
+                <div className='edit_view_box list'>
+                  <p style={{ cursor: 'pointer' }} onClick={() => { setSelectedGenre(genre); setUpdateModal(true) }}>Edit</p>
+                  <p style={{ cursor: 'pointer' }} onClick={() => fnOnRevertDelete(genre)}>
+                    {genre?.is_deleted ? <i className="ri-reset-left-line"></i> : <i className="ri-delete-bin-6-line"></i>}
+                  </p>
+                </div>
+              </ViewList>
+            )
+          })
+            : <EmptyLoader />
           }
         </ViewCrudContainer>
       }
+
+      {!isLoadingAllGenres && <div className='pagination_container'>
+        <Pagination
+          defaultCurrent={defaultCurrent}
+          showSizeChanger
+          total={totalGenres}
+          pageSizeOptions={pageSizeOptions}
+          pageSize={pageSize}
+          onChange={fnOnChangePagination}
+        />
+      </div>}
 
       <Modal open={addModal} onClose={() => setAddModal(false)}>
         <h3 style={{ padding: '12px 0px' }} >Add Genre</h3>
@@ -113,7 +129,7 @@ const Genre = () => {
         <Button onClick={() => fnAddGenre({ name: selectedGenre?.name })} isLoading={isLoadingAddGenre} style={{ width: 'fit-content' }} title={'Save'} />
       </Modal>
 
-      <Modal open={updateModal} onClose={() => {setSelectedGenre(null); setUpdateModal(false)}}>
+      <Modal open={updateModal} onClose={() => { setSelectedGenre(null); setUpdateModal(false) }}>
         <h3 style={{ padding: '12px 0px' }} >Edit Genre</h3>
         <div>
           <p>Name</p>
@@ -127,7 +143,7 @@ const Genre = () => {
         <Button onClick={fnDeleteGenre} title={'Delete'} isLoading={isLoadingDeleteGenre} style={{ width: 'fit-content', backgroundColor: '#c53030', minWidth: '120px' }} />
       </DeleteModal>
 
-    </>
+    </div>
   )
 }
 

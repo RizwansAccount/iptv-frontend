@@ -9,14 +9,19 @@ import Input from '../../components/Input';
 import Button from '../../components/Button';
 import { useSnackBarManager } from '../../hooks/useSnackBarManager';
 import { useSearchManager } from '../../hooks/useSearchManager';
+import { Pagination } from 'antd';
+import { useGetAllListManager } from '../../hooks/useGetAllListManager';
+import { usePaginationManger } from '../../hooks/usePaginationManager';
 
 const Season = () => {
 
   const { fnShowSnackBar } = useSnackBarManager();
   const { searchTxt } = useSearchManager();
+  const { totalSeasons } = useGetAllListManager();
+  const { defaultCurrent, pageSize, pageSizeOptions, fnOnChangePagination } = usePaginationManger();
 
-  const { data: allSeasons, isLoading: isLoadingAllSeasons, isFetching : isFetchingSeasons } = useGetAllSeasonsQuery(searchTxt);
-  const { data: seriesData, isLoading: isLoadingSeriesData } = useGetAllSeriesQuery();
+  const { data: allSeasons, isLoading: isLoadingAllSeasons, isFetching: isFetchingSeasons } = useGetAllSeasonsQuery({ search: searchTxt, page: defaultCurrent, limit: pageSize });
+  const { data: seriesData } = useGetAllSeriesQuery();
   const [addSeason, { isLoading: isLoadingAddSeason }] = useAddSeasonMutation();
   const [updateSeason, { isLoading: isLoadingUpdateSeason }] = useUpdateSeasonMutation();
   const [deleteSeason, { isLoading: isLoadingDeleteSeason }] = useDeleteSeasonMutation();
@@ -97,7 +102,7 @@ const Season = () => {
   };
 
   return (
-    <>
+    <div className='view_page_container' >
       {(isLoadingAllSeasons || isFetchingSeasons) ? <Loader />
         : <ViewCrudContainer onAdd={() => setAddModal(true)} type='seasons' >
           {
@@ -113,23 +118,34 @@ const Season = () => {
                     <p style={{ cursor: 'pointer' }} onClick={() => fnOnEditSeason(season)} >Edit</p>
                     <p style={{ cursor: 'pointer' }}  >
                       {season?.is_deleted ?
-                        <i onClick={()=> fnUpdateSeason({ _id : season?._id, is_deleted : false})} className="ri-reset-left-line"></i>
+                        <i onClick={() => fnUpdateSeason({ _id: season?._id, is_deleted: false })} className="ri-reset-left-line"></i>
                         : <i onClick={() => setDeleteSeasonId(season?._id)} className="ri-delete-bin-6-line"></i>}
                     </p>
                   </div>
                 </ViewList>
               )
             })
-            : <EmptyLoader/>
+              : <EmptyLoader />
           }
         </ViewCrudContainer>}
+
+      { !isLoadingAllSeasons && <div className='pagination_container'>
+        <Pagination
+          defaultCurrent={defaultCurrent}
+          showSizeChanger
+          total={totalSeasons}
+          pageSizeOptions={pageSizeOptions}
+          pageSize={pageSize}
+          onChange={fnOnChangePagination}
+        />
+      </div>}
 
       <Modal open={addModal} title='Add Season' onClose={fnOnModalClose}>
         <Input inputTitle='Name' value={selectedSeason?.name} name={'name'} onChange={fnOnChange} />
         <Input inputTitle='Description' value={selectedSeason?.description} name={'description'} onChange={fnOnChange} />
         <p>{'Select Series'}</p>
         <select className='select_style' value={selectedSeason?.series_id} name='series_id' onChange={fnOnChange}>
-          <option hidden >Select Season</option>
+          <option hidden >Select Series</option>
           {allSeries?.map((series) => <option value={series?._id}>{series?.name}</option>)}
         </select>
         <Button title={'Save'} isLoading={isLoadingAddSeason} onClick={fnAddSeason} style={{ width: 'fit-content' }} />
@@ -143,7 +159,7 @@ const Season = () => {
           <option hidden >Select Series</option>
           {allSeries?.map((series) => <option value={series?._id}>{series?.name}</option>)}
         </select>
-        <Button title={'Update'} isLoading={isLoadingUpdateSeason} onClick={()=>fnUpdateSeason({ ...selectedSeason })} style={{ width: 'fit-content' }} />
+        <Button title={'Update'} isLoading={isLoadingUpdateSeason} onClick={() => fnUpdateSeason({ ...selectedSeason })} style={{ width: 'fit-content' }} />
       </Modal>
 
       <DeleteModal open={deleteSeasonId} onClose={() => setDeleteSeasonId(null)}>
@@ -151,7 +167,7 @@ const Season = () => {
         <Button onClick={fnDelete} title={'Delete'} isLoading={isLoadingDeleteSeason} style={{ width: 'fit-content', backgroundColor: '#c53030', minWidth: '120px' }} />
       </DeleteModal>
 
-    </>
+    </div>
   )
 }
 
