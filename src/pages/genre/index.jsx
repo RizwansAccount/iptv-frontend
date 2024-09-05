@@ -12,6 +12,7 @@ import { useSearchManager } from '../../hooks/useSearchManager';
 import { useGetAllListManager } from '../../hooks/useGetAllListManager';
 import { usePaginationManger } from '../../hooks/usePaginationManager';
 import { Pagination } from 'antd';
+import { DeleteIcon, RevertIcon } from '../../assets/icons';
 
 const Genre = () => {
 
@@ -29,16 +30,6 @@ const Genre = () => {
   const [deleteGenreId, setDeleteGenreId] = useState(null);
   const [addModal, setAddModal] = useState(false);
   const [updateModal, setUpdateModal] = useState(false);
-
-  const fnOnRevertDelete = (genre) => {
-    const id = genre?._id;
-    const isDeleted = genre?.is_deleted;
-    if (isDeleted) {
-      fnUpdateGenre({ _id: genre?._id, is_deleted: false });
-    } else {
-      setDeleteGenreId(id);
-    }
-  };
 
   const fnDeleteGenre = async () => {
     try {
@@ -96,10 +87,12 @@ const Genre = () => {
                 <p className='list'>{genre?.name}</p>
                 <p className='list'>{genre?.is_deleted ? 'Deleted' : 'Active'}</p>
                 <div className='edit_view_box list'>
+
                   <p style={{ cursor: 'pointer' }} onClick={() => { setSelectedGenre(genre); setUpdateModal(true) }}>Edit</p>
-                  <p style={{ cursor: 'pointer' }} onClick={() => fnOnRevertDelete(genre)}>
-                    {genre?.is_deleted ? <i className="ri-reset-left-line"></i> : <i className="ri-delete-bin-6-line"></i>}
-                  </p>
+
+                  {genre?.is_deleted ? <RevertIcon onClick={() => fnUpdateGenre({ _id: genre?._id, is_deleted: false })} />
+                    : <DeleteIcon onClick={() => setDeleteGenreId(genre?._id)} />}
+
                 </div>
               </ViewList>
             )

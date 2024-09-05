@@ -13,6 +13,7 @@ import { useSearchManager } from '../../hooks/useSearchManager';
 import { useGetAllListManager } from '../../hooks/useGetAllListManager';
 import { usePaginationManger } from '../../hooks/usePaginationManager';
 import { Pagination } from 'antd';
+import { DeleteIcon, RevertIcon } from '../../assets/icons';
 
 const Series = () => {
 
@@ -36,17 +37,12 @@ const Series = () => {
 
   const { data: file, isLoading: isLoadingFile } = useGetFileQuery(selectedSeries?.thumbnail_id);
 
-  const fnOnRevertDeleteView = async (series) => {
+  const fnOnRevert = async (series) => {
     const id = series?._id;
-    const isDeleted = series?.is_deleted;
-    if (isDeleted) {
-      const result = await updateSeries({ _id: id, is_deleted: false });
-      const response = result?.data
-      if (response?.success) {
-        fnShowSnackBar('Series updated successfully!')
-      }
-    } else {
-      setDeleteSeriesId(id);
+    const result = await updateSeries({ _id: id, is_deleted: false });
+    const response = result?.data
+    if (response?.success) {
+      fnShowSnackBar('Series updated successfully!')
     }
   };
 
@@ -154,7 +150,7 @@ const Series = () => {
 
     if (type == 'update') { setUpdateModal(false); }
     else { setAddModal(false); }
-  }
+  };
 
   return (
     <div className='view_page_container'>
@@ -169,9 +165,10 @@ const Series = () => {
                   <p className='list'>{series?.is_deleted ? 'Deleted' : 'Active'}</p>
                   <div className='edit_view_box list'>
                     <p style={{ cursor: 'pointer' }} onClick={() => { setSelectedSeries(series); setUpdateModal(true) }}>Edit</p>
-                    <p style={{ cursor: 'pointer' }} onClick={() => fnOnRevertDeleteView(series)}>
-                      {series?.is_deleted ? <i className="ri-reset-left-line"></i> : <i className="ri-delete-bin-6-line"></i>}
-                    </p>
+
+                    {series?.is_deleted ? <RevertIcon onClick={() => fnOnRevert(series)} />
+                      : <DeleteIcon onClick={() => setDeleteSeriesId(series?._id)} />}
+
                   </div>
                 </ViewList>
               )

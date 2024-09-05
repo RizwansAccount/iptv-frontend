@@ -12,6 +12,7 @@ import { useSearchManager } from '../../hooks/useSearchManager';
 import { Pagination } from 'antd';
 import { useGetAllListManager } from '../../hooks/useGetAllListManager';
 import { usePaginationManger } from '../../hooks/usePaginationManager';
+import { DeleteIcon, RevertIcon } from '../../assets/icons';
 
 const Season = () => {
 
@@ -116,11 +117,10 @@ const Season = () => {
                   <p className='list'>{season?.is_deleted ? 'Deleted' : 'Active'}</p>
                   <div className='edit_view_box list'>
                     <p style={{ cursor: 'pointer' }} onClick={() => fnOnEditSeason(season)} >Edit</p>
-                    <p style={{ cursor: 'pointer' }}  >
-                      {season?.is_deleted ?
-                        <i onClick={() => fnUpdateSeason({ _id: season?._id, is_deleted: false })} className="ri-reset-left-line"></i>
-                        : <i onClick={() => setDeleteSeasonId(season?._id)} className="ri-delete-bin-6-line"></i>}
-                    </p>
+
+                    {season?.is_deleted ? <RevertIcon onClick={() => fnUpdateSeason({ _id: season?._id, is_deleted: false })} />
+                      : <DeleteIcon onClick={() => setDeleteSeasonId(season?._id)} />}
+                      
                   </div>
                 </ViewList>
               )
@@ -129,7 +129,7 @@ const Season = () => {
           }
         </ViewCrudContainer>}
 
-      { !isLoadingAllSeasons && <div className='pagination_container'>
+      {!isLoadingAllSeasons && <div className='pagination_container'>
         <Pagination
           defaultCurrent={defaultCurrent}
           showSizeChanger

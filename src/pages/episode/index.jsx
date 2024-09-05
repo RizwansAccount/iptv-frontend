@@ -12,6 +12,7 @@ import { useSearchManager } from '../../hooks/useSearchManager';
 import { useGetAllListManager } from '../../hooks/useGetAllListManager';
 import { usePaginationManger } from '../../hooks/usePaginationManager';
 import { Pagination } from 'antd';
+import { DeleteIcon, RevertIcon } from '../../assets/icons';
 
 const Episode = () => {
 
@@ -114,11 +115,10 @@ const Episode = () => {
                     <p className='list'>{episode?.is_deleted ? 'Deleted' : 'Active'}</p>
                     <div className='edit_view_box list'>
                       <p style={{ cursor: 'pointer' }} onClick={() => fnOnEditEpisode(episode)} >Edit</p>
-                      <p style={{ cursor: 'pointer' }}  >
-                        {episode?.is_deleted ?
-                          <i onClick={() => fnUpdateEpisode({ _id: episode?._id, is_deleted: false })} className="ri-reset-left-line"></i>
-                          : <i onClick={() => setDeleteEpisodeId(episode?._id)} className="ri-delete-bin-6-line"></i>}
-                      </p>
+
+                      {episode?.is_deleted ? <RevertIcon onClick={() => fnUpdateEpisode({ _id: episode?._id, is_deleted: false })} />
+                        : <DeleteIcon onClick={() => setDeleteEpisodeId(episode?._id)} /> }
+                        
                     </div>
                   </ViewList>
                 )
