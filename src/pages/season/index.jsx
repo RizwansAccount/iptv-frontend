@@ -29,20 +29,20 @@ const Season = () => {
 
   const allSeries = seriesData?.filter((series) => series?.is_deleted == false);
 
-  const [addModal, setAddModal] = useState(false);
-  const [updateModal, setUpdateModal] = useState(false);
+  const [addUpdateModal, setAddUpdateModal] = useState({ state: false, type: null });
   const [selectedSeason, setSelectedSeason] = useState({ name: '', description: '', series_id: null });
   const [deleteSeasonId, setDeleteSeasonId] = useState(null);
+
+  const isAddModal = addUpdateModal.type == 'add';
 
   const fnOnChange = (e) => {
     const { name, value } = e.target;
     setSelectedSeason((pre) => ({ ...pre, [name]: value }));
   };
 
-  const fnOnModalClose = (type) => {
+  const fnOnModalClose = () => {
     setSelectedSeason({ name: '', description: '', series_id: null });
-    if (type == 'update') { setUpdateModal(false); }
-    else { setAddModal(false); }
+    setAddUpdateModal({ state : false, type : null })
   };
 
   const fnAddSeason = async () => {
@@ -53,8 +53,7 @@ const Season = () => {
         const response = result?.data;
         if (response?.success) {
           fnShowSnackBar('Season added successfully!');
-          setSelectedSeason({ name: '', description: '', series_id: null });
-          setAddModal(false);
+          fnOnModalClose();
         }
       } catch (error) {
         fnShowSnackBar('something went wrong!', true)
@@ -70,8 +69,7 @@ const Season = () => {
       const response = result?.data;
       if (response?.success) {
         fnShowSnackBar('Season updated successfully!');
-        setSelectedSeason({ name: '', description: '', series_id: null });
-        setUpdateModal(false);
+        fnOnModalClose();
       }
     } catch (error) {
       fnShowSnackBar('something went wrong!', true)
@@ -86,7 +84,7 @@ const Season = () => {
   const fnOnEditSeason = (season) => {
     const { _id, name, description, series_id } = season;
     setSelectedSeason({ name, description, series_id, _id });
-    setUpdateModal(true);
+    setAddUpdateModal({state: true, type : 'update'});
   };
 
   const fnDelete = async () => {
@@ -105,7 +103,7 @@ const Season = () => {
   return (
     <div className='view_page_container' >
       {(isLoadingAllSeasons || isFetchingSeasons) ? <Loader />
-        : <ViewCrudContainer onAdd={() => setAddModal(true)} type='seasons' >
+        : <ViewCrudContainer onAdd={() => setAddUpdateModal({state: true, type : 'add'})} type='seasons' >
           {
             allSeasons?.length > 0 ? allSeasons?.map((season) => {
               const series_id = season?.series_id;
@@ -120,7 +118,7 @@ const Season = () => {
 
                     {season?.is_deleted ? <RevertIcon onClick={() => fnUpdateSeason({ _id: season?._id, is_deleted: false })} />
                       : <DeleteIcon onClick={() => setDeleteSeasonId(season?._id)} />}
-                      
+
                   </div>
                 </ViewList>
               )
@@ -140,26 +138,24 @@ const Season = () => {
         />
       </div>}
 
-      <Modal open={addModal} title='Add Season' onClose={fnOnModalClose}>
+      <Modal open={addUpdateModal.state} title={(isAddModal ? 'Add' : 'Update') + ' Season'} onClose={fnOnModalClose}>
+        
         <Input inputTitle='Name' value={selectedSeason?.name} name={'name'} onChange={fnOnChange} />
         <Input inputTitle='Description' value={selectedSeason?.description} name={'description'} onChange={fnOnChange} />
-        <p>{'Select Series'}</p>
+        
+        <p>{'Series'}</p>
+        
         <select className='select_style' value={selectedSeason?.series_id} name='series_id' onChange={fnOnChange}>
           <option hidden >Select Series</option>
           {allSeries?.map((series) => <option value={series?._id}>{series?.name}</option>)}
         </select>
-        <Button title={'Save'} isLoading={isLoadingAddSeason} onClick={fnAddSeason} style={{ width: 'fit-content' }} />
-      </Modal>
+        
+        <Button
+          title={isAddModal ? 'Save' : 'Update'} isLoading={isLoadingAddSeason || isLoadingUpdateSeason}
+          onClick={()=> { isAddModal ? fnAddSeason() : fnUpdateSeason({...selectedSeason}) }}
+          style={{ width: 'fit-content' }}
+        />
 
-      <Modal open={updateModal} title='Update Season' onClose={() => fnOnModalClose('update')}>
-        <Input inputTitle='Name' value={selectedSeason?.name} name={'name'} onChange={fnOnChange} />
-        <Input inputTitle='Description' value={selectedSeason?.description} name={'description'} onChange={fnOnChange} />
-        <p>{'Select Series'}</p>
-        <select className='select_style' value={selectedSeason?.series_id} name='series_id' onChange={fnOnChange}>
-          <option hidden >Select Series</option>
-          {allSeries?.map((series) => <option value={series?._id}>{series?.name}</option>)}
-        </select>
-        <Button title={'Update'} isLoading={isLoadingUpdateSeason} onClick={() => fnUpdateSeason({ ...selectedSeason })} style={{ width: 'fit-content' }} />
       </Modal>
 
       <DeleteModal open={deleteSeasonId} onClose={() => setDeleteSeasonId(null)}>

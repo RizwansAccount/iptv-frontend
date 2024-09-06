@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import './style.css'
-import { useAddEpisodeMutation, useDeleteEpisodeMutation, useGetAllEpisodesQuery, useGetAllSeasonsQuery, useUpdateEpisodeMutation } from '../../redux/storeApis'
+import { useAddEpisodeMutation, useDeleteEpisodeMutation, useGetAllEpisodesQuery, useGetAllSeasonsQuery, useGetFileQuery, useUpdateEpisodeMutation, useUploadFileMutation } from '../../redux/storeApis'
 import ViewCrudContainer from '../../components/Views/ViewCrudContainer';
 import Loader, { EmptyLoader } from '../../components/Loader';
 import ViewList from '../../components/Views/ViewList';
@@ -13,6 +13,7 @@ import { useGetAllListManager } from '../../hooks/useGetAllListManager';
 import { usePaginationManger } from '../../hooks/usePaginationManager';
 import { Pagination } from 'antd';
 import { DeleteIcon, RevertIcon } from '../../assets/icons';
+import { Config } from '../../constants';
 
 const Episode = () => {
 
@@ -26,21 +27,36 @@ const Episode = () => {
   const [addEpisode, { isLoading: isLoadingAddEpisode }] = useAddEpisodeMutation();
   const [updateEpisode, { isLoading: isLoadingUpdateEpisode }] = useUpdateEpisodeMutation();
   const [deleteEpisode, { isLoading: isLoadingDeleteEpisode }] = useDeleteEpisodeMutation();
+  const [uploadFile, { isLoading: isLoadingUploadFile }] = useUploadFileMutation();
 
-  const [addModal, setAddModal] = useState(false);
-  const [updateModal, setUpdateModal] = useState(false);
-  const [selectedEpisode, setSelectedEpisode] = useState({ name: '', description: '', season_id: null });
+  const [addUpdateModal, setAddUpdateModal] = useState({ state: false, type: null });
+  const [selectedEpisode, setSelectedEpisode] = useState({ name: '', description: '', season_id: null, file : null });
   const [deleteEpisodeId, setDeleteEpisodeId] = useState(false);
+
+  const [selectedImage, setSelectedImage] = useState(false);
+
+  const { data: fileData, isLoading: isLoadingFile } = useGetFileQuery(selectedEpisode?.thumbnail_id);
+
+  const isAddModal = addUpdateModal.type == 'add';
 
   const fnOnChange = (e) => {
     const { name, value } = e.target;
     setSelectedEpisode((pre) => ({ ...pre, [name]: value }));
   };
 
-  const fnOnModalClose = (type) => {
-    setSelectedEpisode({ name: '', description: '', season_id: null });
-    if (type == 'update') { setUpdateModal(false); }
-    else { setAddModal(false); }
+  const fnOnFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setSelectedEpisode((pre) => ({ ...pre, file }));
+      const imageUrl = URL.createObjectURL(file);
+      setSelectedImage(imageUrl);
+    };
+  };
+
+  const fnOnModalClose = () => {
+    setSelectedEpisode({ name: '', description: '', season_id: null, file : null });
+    setAddUpdateModal({ state : false, type : null });
+    setSelectedImage(null);
   };
 
   const fnGetSeasonName = (id) => {
@@ -49,21 +65,30 @@ const Episode = () => {
   };
 
   const fnOnEditEpisode = (episode) => {
-    const { _id, name, description, season_id } = episode;
-    setSelectedEpisode({ name, description, season_id, _id });
-    setUpdateModal(true);
+    const { _id, name, description, season_id, thumbnail_id } = episode;
+    setSelectedEpisode({ name, description, season_id, _id, thumbnail_id });
+    setAddUpdateModal({ state : true, type : 'update' })
   };
 
   const fnAddEpisode = async () => {
     const checkValidation = Object.values(selectedEpisode)?.every(value => value);
     if (checkValidation) {
       try {
-        const result = await addEpisode({ ...selectedEpisode });
+        const file = selectedEpisode?.file;
+
+        let formData = new FormData();
+        formData.append('file', file);
+
+        const fileResponse = await uploadFile(formData);
+        const thumbnail_id = fileResponse?.data?._id;
+
+        const body = { name : selectedEpisode?.name, description : selectedEpisode?.description, season_id : selectedEpisode?.season_id, thumbnail_id };
+
+        const result = await addEpisode(body);
         const response = result?.data;
         if (response?.success) {
           fnShowSnackBar('Episode added successfully!');
-          setSelectedEpisode({ name: '', description: '', season_id: null });
-          setAddModal(false);
+          fnOnModalClose();
         }
       } catch (error) {
         fnShowSnackBar('something went wrong!', true)
@@ -73,14 +98,32 @@ const Episode = () => {
     }
   };
 
-  const fnUpdateEpisode = async (body) => {
+  const fnUpdateEpisode = async (data) => {
     try {
+      const file = selectedEpisode?.file;
+      let thumbnail_id;
+
+      if (file) {
+        let formData = new FormData();
+        formData.append('file', file);
+        const fileResponse = await uploadFile(formData);
+        thumbnail_id = fileResponse?.data?._id;
+      }
+
+      const newData = {
+        _id: selectedEpisode?._id,
+        name: selectedEpisode?.name,
+        description: selectedEpisode?.description,
+        thumbnail_id: thumbnail_id ?? selectedEpisode?.thumbnail_id
+      };
+
+      const body = {...data, ...newData};
+
       const result = await updateEpisode(body);
       const response = result?.data;
       if (response?.success) {
         fnShowSnackBar('Episode updated successfully!');
-        setSelectedEpisode({ name: '', description: '', season_id: null });
-        setUpdateModal(false);
+        fnOnModalClose();
       }
     } catch (error) {
       fnShowSnackBar('something went wrong!', true)
@@ -104,7 +147,7 @@ const Episode = () => {
     <div className='view_page_container'>
       {
         (isLoadingAllEpisodes || isFetchingEpisodes) ? <Loader />
-          : <ViewCrudContainer type='episodes' >
+          : <ViewCrudContainer onAdd={()=> setAddUpdateModal({ state : true, type : 'add' })} type='episodes' >
             {
               allEpisodes?.length > 0 ? allEpisodes?.map((episode) => {
                 return (
@@ -117,8 +160,8 @@ const Episode = () => {
                       <p style={{ cursor: 'pointer' }} onClick={() => fnOnEditEpisode(episode)} >Edit</p>
 
                       {episode?.is_deleted ? <RevertIcon onClick={() => fnUpdateEpisode({ _id: episode?._id, is_deleted: false })} />
-                        : <DeleteIcon onClick={() => setDeleteEpisodeId(episode?._id)} /> }
-                        
+                        : <DeleteIcon onClick={() => setDeleteEpisodeId(episode?._id)} />}
+
                     </div>
                   </ViewList>
                 )
@@ -139,26 +182,29 @@ const Episode = () => {
         />
       </div>}
 
-      <Modal open={addModal} title='Add Episode' onClose={fnOnModalClose}>
-        <Input inputTitle='Name' value={selectedEpisode?.name} name={'name'} onChange={fnOnChange} />
-        <Input inputTitle='Description' value={selectedEpisode?.description} name={'description'} onChange={fnOnChange} />
-        <p>{'Select Season'}</p>
-        <select className='select_style' value={selectedEpisode?.season_id} name='season_id' onChange={fnOnChange}>
-          <option hidden >Select Season</option>
-          {allSeasons?.map((season) => <option value={season?._id}>{season?.name}</option>)}
-        </select>
-        <Button title={'Save'} isLoading={isLoadingAddEpisode} onClick={fnAddEpisode} style={{ width: 'fit-content' }} />
-      </Modal>
+      <Modal open={addUpdateModal.state} title={(isAddModal ? 'Add' : 'Update') + ' Episode'} onClose={fnOnModalClose}>
 
-      <Modal open={updateModal} title='Update Episode' onClose={() => fnOnModalClose('update')}>
         <Input inputTitle='Name' value={selectedEpisode?.name} name={'name'} onChange={fnOnChange} />
         <Input inputTitle='Description' value={selectedEpisode?.description} name={'description'} onChange={fnOnChange} />
-        <p>{'Select Season'}</p>
+
+        <p>{'Season'}</p>
         <select className='select_style' value={selectedEpisode?.season_id} name='season_id' onChange={fnOnChange}>
           <option hidden >Select Season</option>
           {allSeasons?.map((season) => <option value={season?._id}>{season?.name}</option>)}
         </select>
-        <Button title={'Update'} isLoading={isLoadingUpdateEpisode} onClick={() => fnUpdateEpisode({ ...selectedEpisode })} style={{ width: 'fit-content' }} />
+
+        <Input inputTitle='Select File' type='file' onChange={fnOnFileChange} />
+        { isAddModal ? selectedImage && <img src={selectedImage} className='series_img' />
+          : <img src={selectedImage ? selectedImage : (Config.imgUrl + fileData?.original_name)} className='series_img' />
+        }
+
+        <Button
+          title={isAddModal ? 'Save' : 'Update'}
+          isLoading={isLoadingUploadFile || isLoadingAddEpisode || isLoadingUpdateEpisode}
+          onClick={()=> { isAddModal ? fnAddEpisode() : fnUpdateEpisode({ name:selectedEpisode?.name, description:selectedEpisode?.description, season_id:selectedEpisode?.season_id  }) }}
+          style={{ width: 'fit-content' }}
+        />
+
       </Modal>
 
       <DeleteModal open={deleteEpisodeId} onClose={() => setDeleteEpisodeId(null)}>

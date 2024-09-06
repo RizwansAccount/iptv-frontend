@@ -30,12 +30,13 @@ const Series = () => {
 
   const [selectedSeries, setSelectedSeries] = useState({ name: '', description: '', file: null });
   const [deleteSeriesId, setDeleteSeriesId] = useState(null);
-  const [addModal, setAddModal] = useState(false);
-  const [updateModal, setUpdateModal] = useState(false);
+  const [addUpdateModal, setAddUpdateModal] = useState({ state: false, type: null });
 
   const [selectedImage, setSelectedImage] = useState(false);
 
-  const { data: file, isLoading: isLoadingFile } = useGetFileQuery(selectedSeries?.thumbnail_id);
+  const isAddModal = addUpdateModal.type == 'add';
+
+  const { data: fileData, isLoading: isLoadingFile } = useGetFileQuery(selectedSeries?.thumbnail_id);
 
   const fnOnRevert = async (series) => {
     const id = series?._id;
@@ -86,8 +87,7 @@ const Series = () => {
       const response = result?.data;
       if (response?.success) {
         fnShowSnackBar('Series updated successfully!')
-        setSelectedSeries(null)
-        setUpdateModal(false);
+        fnOnModalClose();
       }
 
     } catch (error) {
@@ -115,9 +115,7 @@ const Series = () => {
         const response = result?.data;
         if (response?.success) {
           fnShowSnackBar('Series added successfully!');
-          setSelectedSeries({ name: '', description: '', file: null });
-          setSelectedImage(false);
-          setAddModal(false);
+          fnOnModalClose();
         }
 
       } catch (error) {
@@ -143,19 +141,16 @@ const Series = () => {
     setSelectedSeries((pre) => ({ ...pre, [name]: value }))
   };
 
-  const fnOnModalClose = (type) => {
-
+  const fnOnModalClose = () => {
     setSelectedSeries({ name: '', description: '', file: null });
     setSelectedImage(null);
-
-    if (type == 'update') { setUpdateModal(false); }
-    else { setAddModal(false); }
+    setAddUpdateModal({ state : false, type : null })
   };
 
   return (
     <div className='view_page_container'>
       {(isLoadingAllSeries || isFetchingSeries) ? <Loader />
-        : <ViewCrudContainer type='series' onAdd={() => setAddModal(true)}>
+        : <ViewCrudContainer type='series' onAdd={() => setAddUpdateModal({state : true, type : 'add'})}>
           {
             allSeries?.length > 0 ? allSeries?.map((series) => {
               return (
@@ -164,7 +159,7 @@ const Series = () => {
                   <p className='list spacing'>{series?.description}</p>
                   <p className='list'>{series?.is_deleted ? 'Deleted' : 'Active'}</p>
                   <div className='edit_view_box list'>
-                    <p style={{ cursor: 'pointer' }} onClick={() => { setSelectedSeries(series); setUpdateModal(true) }}>Edit</p>
+                    <p style={{ cursor: 'pointer' }} onClick={() => { setSelectedSeries(series); setAddUpdateModal({state : true, type :'update'}) }}>Edit</p>
 
                     {series?.is_deleted ? <RevertIcon onClick={() => fnOnRevert(series)} />
                       : <DeleteIcon onClick={() => setDeleteSeriesId(series?._id)} />}
@@ -189,30 +184,27 @@ const Series = () => {
         />
       </div>}
 
-      <Modal open={addModal} title='Add Series' onClose={fnOnModalClose}>
+      <Modal open={addUpdateModal.state} title={(isAddModal ? 'Add' : 'Update') + ' Series'} onClose={fnOnModalClose}>
         <div className='inputs_container'>
           <Input inputTitle='Name' value={selectedSeries?.name} name={'name'} onChange={fnOnChange} />
           <Input inputTitle='Description' value={selectedSeries?.description} name={'description'} onChange={fnOnChange} />
           <Input inputTitle='Select File' type='file' onChange={fnOnFileChange} />
-          {selectedImage && <img src={selectedImage} className='series_img' />}
+          {isAddModal ? selectedImage && <img src={selectedImage} className='series_img' />
+            : <img src={selectedImage ? selectedImage : (Config.imgUrl + fileData?.original_name)} className='series_img' />
+          }
         </div>
-        <Button onClick={fnAddSeries} isLoading={isLoadingUploadFile || isLoadingAddSeries} style={{ width: 'fit-content' }} title={'Save'} />
+        <Button onClick={()=> { isAddModal ? fnAddSeries() : fnUpdateSeries()}} isLoading={isLoadingUploadFile || isLoadingAddSeries} style={{ width: 'fit-content' }} title={'Save'} />
       </Modal>
 
-      <Modal open={updateModal} title='Edit Series' onClose={() => fnOnModalClose('update')}>
-        {isLoadingFile ? <Loader /> :
-          <>
-            <div className='inputs_container'>
-              <Input inputTitle='Name' value={selectedSeries?.name} name={'name'} onChange={fnOnChange} />
-              <Input inputTitle='Description' value={selectedSeries?.description} name={'description'} onChange={fnOnChange} />
-              <Input inputTitle='Select File' type='file' onChange={fnOnFileChange} />
-              <img src={selectedImage ? selectedImage : (Config.imgUrl + file?.original_name)} className='series_img' />
-            </div>
-
-            <Button onClick={fnUpdateSeries} isLoading={isLoadingUploadFile || isLoadingUpdateSeries} style={{ width: 'fit-content' }} title={'Update'} />
-          </>
-        }
-      </Modal>
+      {/* <Modal open={updateModal} title='Edit Series' onClose={() => fnOnModalClose('update')}>
+        <div className='inputs_container'>
+          <Input inputTitle='Name' value={selectedSeries?.name} name={'name'} onChange={fnOnChange} />
+          <Input inputTitle='Description' value={selectedSeries?.description} name={'description'} onChange={fnOnChange} />
+          <Input inputTitle='Select File' type='file' onChange={fnOnFileChange} />
+          <img src={selectedImage ? selectedImage : (Config.imgUrl + fileData?.original_name)} className='series_img' />
+        </div>
+        <Button onClick={fnUpdateSeries} isLoading={isLoadingUploadFile || isLoadingUpdateSeries} style={{ width: 'fit-content' }} title={'Update'} />
+      </Modal> */}
 
       <DeleteModal open={deleteSeriesId} onClose={() => setDeleteSeriesId(null)}>
         <p>Are you sure to want to delete this Series ?</p>

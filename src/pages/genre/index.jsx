@@ -28,8 +28,9 @@ const Genre = () => {
 
   const [selectedGenre, setSelectedGenre] = useState(null);
   const [deleteGenreId, setDeleteGenreId] = useState(null);
-  const [addModal, setAddModal] = useState(false);
-  const [updateModal, setUpdateModal] = useState(false);
+  const [addUpdateModal, setAddUpdateModal] = useState({ state: false, type: null });
+
+  const isAddModal = addUpdateModal.type == 'add';
 
   const fnDeleteGenre = async () => {
     try {
@@ -51,7 +52,7 @@ const Genre = () => {
       if (response?.success) {
         fnShowSnackBar('Genre updated successfully!');
         setSelectedGenre(null);
-        setUpdateModal(false);
+        setAddUpdateModal({ state: false, type: null })
       }
     } catch (error) {
       fnShowSnackBar('something went wrong!', true);
@@ -67,8 +68,8 @@ const Genre = () => {
         if (response?.success) {
           fnShowSnackBar('Genre added successfully!');
           setSelectedGenre(null);
-          setAddModal(false);
-        }
+          setAddUpdateModal({ state: false, type: null })
+        };
       } catch (error) {
         fnShowSnackBar('something went wrong!', true);
       }
@@ -80,7 +81,7 @@ const Genre = () => {
   return (
     <div className='view_page_container'>
       {(isLoadingAllGenres || isFetchingGenres) ? <Loader /> :
-        <ViewCrudContainer onAdd={() => setAddModal(true)}>
+        <ViewCrudContainer onAdd={() => setAddUpdateModal({ state: true, type: 'add' })}>
           {allGenres?.length > 0 ? allGenres?.map((genre) => {
             return (
               <ViewList>
@@ -88,7 +89,7 @@ const Genre = () => {
                 <p className='list'>{genre?.is_deleted ? 'Deleted' : 'Active'}</p>
                 <div className='edit_view_box list'>
 
-                  <p style={{ cursor: 'pointer' }} onClick={() => { setSelectedGenre(genre); setUpdateModal(true) }}>Edit</p>
+                  <p style={{ cursor: 'pointer' }} onClick={() => { setSelectedGenre(genre); setAddUpdateModal({ state: true, type: 'update' }) }}>Edit</p>
 
                   {genre?.is_deleted ? <RevertIcon onClick={() => fnUpdateGenre({ _id: genre?._id, is_deleted: false })} />
                     : <DeleteIcon onClick={() => setDeleteGenreId(genre?._id)} />}
@@ -113,22 +114,17 @@ const Genre = () => {
         />
       </div>}
 
-      <Modal open={addModal} onClose={() => setAddModal(false)}>
-        <h3 style={{ padding: '12px 0px' }} >Add Genre</h3>
+      <Modal open={addUpdateModal.state} title={(isAddModal ? 'Add' : 'Update') + ' Genre'} onClose={() => { setAddUpdateModal({ state: false, type: null }); setSelectedGenre(null) }}>
         <div>
           <p>Name</p>
           <Input value={selectedGenre?.name} onChange={(e) => setSelectedGenre((pre) => ({ ...pre, name: e.target.value }))} />
         </div>
-        <Button onClick={() => fnAddGenre({ name: selectedGenre?.name })} isLoading={isLoadingAddGenre} style={{ width: 'fit-content' }} title={'Save'} />
-      </Modal>
-
-      <Modal open={updateModal} onClose={() => { setSelectedGenre(null); setUpdateModal(false) }}>
-        <h3 style={{ padding: '12px 0px' }} >Edit Genre</h3>
-        <div>
-          <p>Name</p>
-          <Input value={selectedGenre?.name} onChange={(e) => setSelectedGenre((pre) => ({ ...pre, name: e.target.value }))} />
-        </div>
-        <Button onClick={() => fnUpdateGenre({ _id: selectedGenre?._id, name: selectedGenre?.name })} isLoading={isLoadingUpdateGenre} style={{ width: 'fit-content' }} title={'Update'} />
+        <Button
+          onClick={() => { isAddModal ? fnAddGenre({ name: selectedGenre?.name }) : fnUpdateGenre({ _id: selectedGenre?._id, name: selectedGenre?.name }) }}
+          isLoading={isLoadingAddGenre || isLoadingUpdateGenre}
+          style={{ width: 'fit-content' }}
+          title={ isAddModal ? 'Save' : 'Update'}
+        />
       </Modal>
 
       <DeleteModal open={deleteGenreId} onClose={() => setDeleteGenreId(null)}>
