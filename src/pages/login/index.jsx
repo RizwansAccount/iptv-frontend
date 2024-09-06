@@ -1,9 +1,9 @@
 import React, { useState } from 'react'
 import Button from '../../components/Button/index';
 import './style.css';
-import { setLocalStorage } from '../../localStorage';
+import { getLocalStorage, setLocalStorage } from '../../localStorage';
 import { Config } from '../../constants';
-import { useNavigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 import { ROUTES } from '../../routes/RouteConstants';
 import ViewAuth from '../../components/Views/ViewAuth';
 import { useSnackBarManager } from '../../hooks/useSnackBarManager';
@@ -13,8 +13,13 @@ const Login = () => {
 
   const navigate = useNavigate();
   const { fnShowSnackBar } = useSnackBarManager();
+  const isUserLoggedIn = getLocalStorage(Config.userToken);
 
   const [loginUser, { isLoading: isLoadingLoginUser }] = useLoginUserMutation();
+
+  if (isUserLoggedIn) {
+    return <Navigate to={ROUTES.genre} replace />;
+  };
 
   const fnLogin = async (event) => {
 

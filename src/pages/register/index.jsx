@@ -1,18 +1,25 @@
-import React, { useState } from 'react'
+import React from 'react'
 import ViewAuth from '../../components/Views/ViewAuth'
 import { ROUTES } from '../../routes/RouteConstants';
-import { useNavigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 import Button from '../../components/Button';
 import './style.css'
 import { useSnackBarManager } from '../../hooks/useSnackBarManager';
 import { useRegisterUserMutation } from '../../redux/storeApis';
+import { getLocalStorage } from '../../localStorage';
+import { Config } from '../../constants';
 
 const Register = () => {
 
   const navigate = useNavigate();
   const { fnShowSnackBar } = useSnackBarManager();
+  const isUserLoggedIn = getLocalStorage(Config.userToken);
 
   const [registerUser, { isLoading: isLoadingRegisterUser }] = useRegisterUserMutation();
+
+  if (isUserLoggedIn) {
+    return <Navigate to={ROUTES.genre} replace />
+  };
 
   const fnRegister = async (event) => {
 
