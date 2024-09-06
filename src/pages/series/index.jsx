@@ -196,16 +196,6 @@ const Series = () => {
         <Button onClick={()=> { isAddModal ? fnAddSeries() : fnUpdateSeries()}} isLoading={isLoadingUploadFile || isLoadingAddSeries} style={{ width: 'fit-content' }} title={'Save'} />
       </Modal>
 
-      {/* <Modal open={updateModal} title='Edit Series' onClose={() => fnOnModalClose('update')}>
-        <div className='inputs_container'>
-          <Input inputTitle='Name' value={selectedSeries?.name} name={'name'} onChange={fnOnChange} />
-          <Input inputTitle='Description' value={selectedSeries?.description} name={'description'} onChange={fnOnChange} />
-          <Input inputTitle='Select File' type='file' onChange={fnOnFileChange} />
-          <img src={selectedImage ? selectedImage : (Config.imgUrl + fileData?.original_name)} className='series_img' />
-        </div>
-        <Button onClick={fnUpdateSeries} isLoading={isLoadingUploadFile || isLoadingUpdateSeries} style={{ width: 'fit-content' }} title={'Update'} />
-      </Modal> */}
-
       <DeleteModal open={deleteSeriesId} onClose={() => setDeleteSeriesId(null)}>
         <p>Are you sure to want to delete this Series ?</p>
         <Button onClick={fnDeleteSeries} title={'Delete'} isLoading={isLoadingDeleteSeries} style={{ width: 'fit-content', backgroundColor: '#c53030', minWidth: '120px' }} />
